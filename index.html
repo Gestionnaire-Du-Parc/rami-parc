@@ -1,0 +1,2528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRECISION LOGISTICS — Gestion du Parc Auto</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-void: #080b0f;
+  --bg-deep: #0d1117;
+  --bg-panel: #111720;
+  --bg-card: #161d28;
+  --bg-hover: #1c2535;
+  --border: #1e2d3d;
+  --border-bright: #2a3f55;
+  --orange: #f97316;
+  --orange-dim: #c2580f;
+  --orange-glow: rgba(249,115,22,0.15);
+  --orange-faint: rgba(249,115,22,0.06);
+  --text-primary: #e8edf2;
+  --text-secondary: #8ba0b8;
+  --text-muted: #4a6278;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --yellow: #eab308;
+  --yellow-dim: rgba(234,179,8,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --cyan: #06b6d4;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:14px; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: 'Barlow', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════ LOGIN SCREEN ═══════════════════════ */
+#loginScreen {
+  position: fixed; inset: 0;
+  background: var(--bg-void);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(249,115,22,0.08) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,45,61,0.3) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,45,61,0.3) 40px);
+}
+
+.login-box {
+  width: 400px;
+  position: relative;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-logo .logo-icon {
+  width: 64px; height: 64px;
+  background: var(--orange-glow);
+  border: 1px solid var(--orange);
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 40px rgba(249,115,22,0.2);
+}
+
+.login-logo h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.login-logo p {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.login-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.04);
+}
+
+.login-card h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--orange-faint);
+}
+
+.form-group select option { background: var(--bg-deep); }
+
+.btn-login {
+  width: 100%;
+  background: var(--orange);
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.btn-login:hover { background: #ea6d10; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(249,115,22,0.3); }
+.btn-login:active { transform: translateY(0); }
+
+.login-error {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--red);
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+  text-align: center;
+}
+
+.login-error.show { display: block; }
+
+/* ═══════════════════════ MAIN APP ═══════════════════════ */
+#appScreen { display: none; }
+
+/* TOPBAR */
+.topbar {
+  height: 60px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: sticky; top: 0; z-index: 100;
+  gap: 20px;
+}
+
+.topbar-brand {
+  display: flex; align-items: center; gap: 12px;
+  flex: 1;
+}
+
+.topbar-icon {
+  width: 36px; height: 36px;
+  background: var(--orange-glow);
+  border: 1px solid var(--orange);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+.topbar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.topbar-title span { color: var(--orange); }
+
+.topbar-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+}
+
+.topbar-right {
+  display: flex; align-items: center; gap: 16px;
+}
+
+.user-badge {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+}
+
+.user-badge .role-tag {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  background: var(--orange-faint);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.user-badge .user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btn-logout {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+/* NAVIGATION TABS */
+.nav-tabs {
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.nav-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 18px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.nav-tab:hover { color: var(--text-secondary); }
+.nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+.nav-tab.admin-only { color: var(--cyan); }
+.nav-tab.admin-only:hover { color: var(--cyan); opacity: 0.8; }
+.nav-tab.admin-only.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+/* MAIN CONTENT */
+.content {
+  padding: 28px 28px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── SECTION HEADERS ── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.section-icon {
+  width: 40px; height: 40px;
+  background: var(--orange-faint);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+
+.section-title h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.section-title p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  letter-spacing: 1px;
+}
+
+/* ── STAT CARDS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.stat-card:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--stat-color, var(--orange));
+}
+
+.stat-card .stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.stat-card .stat-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--stat-color, var(--orange));
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-card .stat-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── DATA TABLE ── */
+.table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-toolbar {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px 9px 38px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-box input:focus { border-color: var(--orange); }
+.search-box::before { content: '🔍'; position: absolute; left: 12px; top: 9px; font-size: 13px; }
+
+.filter-select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-select:focus { border-color: var(--orange); }
+.filter-select option { background: var(--bg-deep); }
+
+.table-container { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead tr {
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border);
+}
+
+thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
+  user-select: none;
+}
+
+thead th:hover { color: var(--text-secondary); }
+
+tbody tr {
+  border-bottom: 1px solid rgba(30,45,61,0.5);
+  transition: background 0.15s;
+}
+
+tbody tr:hover { background: var(--bg-hover); }
+tbody tr:last-child { border-bottom: none; }
+
+tbody td {
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+tbody td:first-child {
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.imat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+  letter-spacing: 1px;
+}
+
+/* STATUS BADGES */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  padding: 3px 10px;
+}
+
+.badge.op   { background: var(--green-dim);  color: var(--green);  }
+.badge.rev  { background: var(--yellow-dim); color: var(--yellow); }
+.badge.pan  { background: var(--red-dim);    color: var(--red);    }
+.badge.hs   { background: rgba(75,85,99,0.2); color: #9ca3af; }
+.badge.type-vl { background: var(--blue-dim); color: var(--blue); }
+.badge.type-pl { background: rgba(168,85,247,0.12); color: #c084fc; }
+.badge.type-ec { background: rgba(245,158,11,0.12); color: #fbbf24; }
+.badge.type-tc { background: rgba(20,184,166,0.12); color: #2dd4bf; }
+
+/* PAGINATION */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.pagination-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.pagination-btns {
+  display: flex; gap: 6px;
+}
+
+.page-btn {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.page-btn:hover, .page-btn.active {
+  background: var(--orange-glow);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ── DASHBOARD ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.dash-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dash-panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.dash-panel-body { padding: 18px; }
+
+.progress-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+}
+
+.progress-row:last-child { margin-bottom: 0; }
+
+.progress-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-deep);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 40px;
+  text-align: right;
+}
+
+.city-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(30,45,61,0.5);
+}
+
+.city-row:last-child { border-bottom: none; }
+
+.city-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.city-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--orange);
+  font-weight: 500;
+}
+
+/* ── FUEL GAUGES ── */
+.fuel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.fuel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+
+.fuel-card:hover { border-color: var(--border-bright); }
+
+.fuel-card-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.fuel-imat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 8px;
+}
+
+.fuel-type {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.fuel-model {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.fuel-gauge-wrap {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.fuel-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-deep);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fuel-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s;
+}
+
+.fuel-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  width: 38px;
+  text-align: right;
+}
+
+.fuel-meta {
+  display: flex; justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── ADMIN PANEL ── */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.admin-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-deep);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.admin-card-header h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.admin-card-body { padding: 20px; }
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-form-row.single { grid-template-columns: 1fr; }
+.admin-form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+.input-group {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.input-group label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.input-group input, .input-group select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus, .input-group select:focus {
+  border-color: var(--orange);
+}
+
+.input-group input[readonly] {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.btn-primary {
+  background: var(--orange);
+  border: none;
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover { background: #ea6d10; }
+
+.btn-secondary {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover { border-color: var(--border-bright); color: var(--text-primary); }
+
+.btn-danger {
+  background: var(--red-dim);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--red);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+.btn-cyan {
+  background: rgba(6,182,212,0.1);
+  border: 1px solid rgba(6,182,212,0.2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cyan:hover { background: rgba(6,182,212,0.2); }
+
+/* USERS LIST */
+.user-list { display: flex; flex-direction: column; gap: 10px; }
+
+.user-item {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.user-item-info { flex: 1; }
+
+.user-item-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.user-item-role {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.user-item-pass {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--orange);
+  background: var(--orange-faint);
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 5px;
+  padding: 4px 10px;
+  letter-spacing: 1px;
+}
+
+.user-item-actions { display: flex; gap: 6px; }
+
+/* ALERT BOX */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+}
+
+.alert.success {
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.2);
+  color: var(--green);
+  display: block;
+}
+
+.alert.error {
+  background: var(--red-dim);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: var(--red);
+  display: block;
+}
+
+/* CHAUFFEUR CARD */
+.chauffeur-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.chauffeur-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.chauffeur-card:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-2px);
+}
+
+.ch-header {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ch-avatar {
+  width: 44px; height: 44px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.ch-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.ch-vehicle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.ch-row {
+  display: flex; justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(30,45,61,0.4);
+  font-size: 12px;
+}
+
+.ch-row:last-child { border-bottom: none; }
+.ch-row .key { color: var(--text-muted); }
+.ch-row .val { color: var(--text-secondary); font-weight: 500; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+/* ENTRETIEN */
+.entretien-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.cost-highlight {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--orange);
+  border-radius: 10px;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.cost-highlight .val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--orange);
+}
+
+.cost-highlight .lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* VIEW TOGGLE */
+.view-toggle {
+  display: flex;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-btn {
+  padding: 8px 14px;
+  font-size: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.view-btn.active, .view-btn:hover {
+  background: var(--orange-glow);
+  color: var(--orange);
+}
+
+/* VISITE TECHNIQUE */
+.vt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.vt-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.vt-header {
+  background: var(--bg-deep);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.vt-checks { padding: 16px; }
+
+.vt-check {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(30,45,61,0.4);
+}
+
+.vt-check:last-child { border-bottom: none; }
+
+.vt-check-num {
+  width: 24px; height: 24px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.vt-check-label { flex: 1; font-size: 12px; color: var(--text-secondary); }
+
+.vt-check-select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.vt-check-select:focus { border-color: var(--orange); }
+.vt-check-select option { background: var(--bg-deep); }
+
+.vt-info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; padding: 0 16px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .dash-grid, .admin-grid, .vt-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .content { padding: 16px; }
+  .topbar-title { font-size: 14px; }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* TOOLTIP */
+[title] { position: relative; cursor: help; }
+
+/* ENTETE ADMIN BANNER */
+.admin-banner {
+  background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(6,182,212,0.03));
+  border: 1px solid rgba(6,182,212,0.15);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-banner .icon { font-size: 24px; }
+.admin-banner p { font-size: 13px; color: var(--cyan); }
+.admin-banner strong { font-weight: 700; }
+
+/* GENERATED PW BOX */
+.pw-box {
+  background: var(--bg-deep);
+  border: 1px solid var(--orange);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 12px;
+}
+
+.pw-value {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--orange);
+  letter-spacing: 4px;
+}
+
+.btn-copy {
+  background: var(--orange-glow);
+  border: 1px solid rgba(249,115,22,0.3);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy:hover { background: rgba(249,115,22,0.2); }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-icon">🚛</div>
+      <h1>PRECISION LOGISTICS</h1>
+      <p>Gestion du Parc Automobile</p>
+    </div>
+    <div class="login-card">
+      <h2>Accès Sécurisé</h2>
+      <div class="form-group">
+        <label>Identifiant utilisateur</label>
+        <input type="text" id="loginUser" placeholder="Entrez votre identifiant" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="loginPass" placeholder="Entrez votre mot de passe" autocomplete="current-password">
+      </div>
+      <button class="btn-login" onclick="doLogin()">CONNEXION</button>
+      <div id="loginError" class="login-error">Identifiant ou mot de passe incorrect.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP ═══════════════════ -->
+<div id="appScreen">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-icon">🚛</div>
+      <div>
+        <div class="topbar-title">PRECISION <span>LOGISTICS</span></div>
+        <div class="topbar-meta">PARC AUTO MAROC — 35 VÉHICULES</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-badge">
+        <span class="role-tag" id="topRole">—</span>
+        <span class="user-name" id="topUser">—</span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">DÉCONNEXION</button>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="showPage('dashboard', this)">📊 Tableau de Bord</button>
+    <button class="nav-tab" onclick="showPage('parc', this)">🚗 Parc Auto</button>
+    <button class="nav-tab" onclick="showPage('entretien', this)">🔧 Entretien</button>
+    <button class="nav-tab" onclick="showPage('carburant', this)">⛽ Carburant</button>
+    <button class="nav-tab" onclick="showPage('chauffeurs', this)">👤 Chauffeurs</button>
+    <button class="nav-tab" onclick="showPage('visite', this)">✅ Visite Technique</button>
+    <button class="nav-tab admin-only" id="adminTab" onclick="showPage('admin', this)">🔐 Administration</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div id="page-dashboard" class="page active">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">📊</div>
+          <div>
+            <h2>Tableau de Bord</h2>
+            <p>Mise à jour : Mars 2026 — Parc de 35 véhicules</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card" style="--stat-color: var(--text-secondary)">
+          <div class="stat-label">Total Véhicules</div>
+          <div class="stat-value">35</div>
+          <div class="stat-sub">Parc complet</div>
+        </div>
+        <div class="stat-card" style="--stat-color: var(--green)">
+          <div class="stat-label">Opérationnels</div>
+          <div class="stat-value">9</div>
+          <div class="stat-sub">25.7% du parc</div>
+        </div>
+        <div class="stat-card" style="--stat-color: var(--yellow)">
+          <div class="stat-label">En Révision</div>
+          <div class="stat-value">12</div>
+          <div class="stat-sub">34.3% du parc</div>
+        </div>
+        <div class="stat-card" style="--stat-color: var(--red)">
+          <div class="stat-label">En Panne</div>
+          <div class="stat-value">2</div>
+          <div class="stat-sub">5.7% du parc</div>
+        </div>
+        <div class="stat-card" style="--stat-color: #9ca3af">
+          <div class="stat-label">Hors Service</div>
+          <div class="stat-value">12</div>
+          <div class="stat-sub">34.3% du parc</div>
+        </div>
+        <div class="stat-card" style="--stat-color: var(--orange)">
+          <div class="stat-label">Km Moyen / Véh.</div>
+          <div class="stat-value">153k</div>
+          <div class="stat-sub">153 032 km</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-panel">
+          <div class="dash-panel-header">🚗 Répartition par Type</div>
+          <div class="dash-panel-body">
+            <div class="progress-row">
+              <div class="progress-label">PL</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:31.4%;background:var(--orange)"></div></div>
+              <div class="progress-pct" style="color:var(--orange)">11 veh</div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-label">VL</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:22.9%;background:var(--blue)"></div></div>
+              <div class="progress-pct" style="color:var(--blue)">8 veh</div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-label">EC</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:22.9%;background:#fbbf24"></div></div>
+              <div class="progress-pct" style="color:#fbbf24">8 veh</div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-label">TC</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:22.9%;background:var(--cyan)"></div></div>
+              <div class="progress-pct" style="color:var(--cyan)">8 veh</div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-header">🏙️ Répartition par Ville</div>
+          <div class="dash-panel-body" id="cityBreakdown"></div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-header">🔧 Coûts Entretien — Top 5</div>
+          <div class="dash-panel-body" id="topCosts"></div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-header">📅 Prochaines Vidanges</div>
+          <div class="dash-panel-body" id="nextVidanges"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PARC AUTO ── -->
+    <div id="page-parc" class="page">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">🚗</div>
+          <div>
+            <h2>Parc Automobile</h2>
+            <p>Base de données — 35 véhicules</p>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="search-box">
+            <input type="text" id="searchParc" placeholder="Rechercher immatriculation, marque, chauffeur..." oninput="filterParc()">
+          </div>
+          <select class="filter-select" id="filterType" onchange="filterParc()">
+            <option value="">Tous types</option>
+            <option value="VL">VL – Véhicule Léger</option>
+            <option value="PL">PL – Poids Lourd</option>
+            <option value="EC">EC – Engin de Chantier</option>
+            <option value="TC">TC – Transport Carburant</option>
+          </select>
+          <select class="filter-select" id="filterStatut" onchange="filterParc()">
+            <option value="">Tous statuts</option>
+            <option value="Opérationnel">Opérationnel</option>
+            <option value="En révision">En révision</option>
+            <option value="En panne">En panne</option>
+            <option value="Hors service">Hors service</option>
+          </select>
+          <select class="filter-select" id="filterVille" onchange="filterParc()">
+            <option value="">Toutes villes</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table id="parcTable">
+            <thead>
+              <tr>
+                <th onclick="sortParc('n')">N°</th>
+                <th onclick="sortParc('imat')">Immatriculation</th>
+                <th onclick="sortParc('type')">Type</th>
+                <th onclick="sortParc('marque')">Marque / Modèle</th>
+                <th onclick="sortParc('annee')">Année</th>
+                <th onclick="sortParc('ville')">Ville</th>
+                <th onclick="sortParc('statut')">Statut</th>
+                <th onclick="sortParc('km')">Kilométrage</th>
+                <th>Chauffeur Titulaire</th>
+                <th>Permis Requis</th>
+                <th>Prochaine Vidange</th>
+                <th>Carburant</th>
+                <th>Niv. Carburant</th>
+              </tr>
+            </thead>
+            <tbody id="parcBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info" id="parcInfo"></div>
+          <div class="pagination-btns" id="parcPagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ENTRETIEN ── -->
+    <div id="page-entretien" class="page">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">🔧</div>
+          <div>
+            <h2>Suivi Entretien</h2>
+            <p>Historique des réparations et maintenances</p>
+          </div>
+        </div>
+      </div>
+      <div class="entretien-summary" id="entretienSummary"></div>
+      <div class="table-wrap">
+        <div class="table-toolbar">
+          <div class="search-box">
+            <input type="text" id="searchEntretien" placeholder="Rechercher..." oninput="filterEntretien()">
+          </div>
+          <select class="filter-select" id="filterPrestataire" onchange="filterEntretien()">
+            <option value="">Tous prestataires</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table id="entretienTable">
+            <thead>
+              <tr>
+                <th>N°</th>
+                <th>Immatriculation</th>
+                <th>Type</th>
+                <th>Marque</th>
+                <th>Nature des Travaux</th>
+                <th>Date</th>
+                <th>Km Entretien</th>
+                <th>Prochain (Km)</th>
+                <th>Coût (MAD)</th>
+                <th>Prestataire</th>
+              </tr>
+            </thead>
+            <tbody id="entretienBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info" id="entretienInfo"></div>
+          <div class="pagination-btns" id="entretienPagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CARBURANT ── -->
+    <div id="page-carburant" class="page">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">⛽</div>
+          <div>
+            <h2>Suivi Carburant</h2>
+            <p>Niveaux et consommations par véhicule</p>
+          </div>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="fuelViewTable" onclick="setFuelView('table')">📋</button>
+          <button class="view-btn" id="fuelViewCards" onclick="setFuelView('cards')">⊞</button>
+        </div>
+      </div>
+      <div id="fuelTableView">
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <input type="text" id="searchFuel" placeholder="Rechercher..." oninput="filterFuel()">
+            </div>
+            <select class="filter-select" id="filterFuelType" onchange="filterFuel()">
+              <option value="">Tous carburants</option>
+              <option value="Gasoil">Gasoil</option>
+              <option value="Essence">Essence</option>
+              <option value="GPL">GPL</option>
+              <option value="Électrique">Électrique</option>
+            </select>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>Immatriculation</th>
+                  <th>Type</th>
+                  <th>Marque</th>
+                  <th>Carburant</th>
+                  <th>Cap. Réservoir</th>
+                  <th>Niv. Actuel</th>
+                  <th>Niv. (L)</th>
+                  <th>Conso. L/100</th>
+                  <th>Autonomie Est.</th>
+                </tr>
+              </thead>
+              <tbody id="fuelBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="fuelCardsView" style="display:none">
+        <div class="fuel-grid" id="fuelCards"></div>
+      </div>
+    </div>
+
+    <!-- ── CHAUFFEURS ── -->
+    <div id="page-chauffeurs" class="page">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">👤</div>
+          <div>
+            <h2>Registre des Chauffeurs</h2>
+            <p>35 chauffeurs enregistrés</p>
+          </div>
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="chViewTable" onclick="setChView('table')">📋</button>
+          <button class="view-btn" id="chViewCards" onclick="setChView('cards')">⊞</button>
+        </div>
+      </div>
+      <div id="chTableView">
+        <div class="table-wrap">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <input type="text" id="searchCh" placeholder="Rechercher chauffeur, ville..." oninput="filterCh()">
+            </div>
+            <select class="filter-select" id="filterPermis" onchange="filterCh()">
+              <option value="">Toutes catégories</option>
+              <option value="B">B</option>
+              <option value="BE">BE</option>
+              <option value="C">C</option>
+              <option value="CE">CE</option>
+              <option value="D">D</option>
+              <option value="EC">EC</option>
+            </select>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>N°</th>
+                  <th>Nom & Prénom</th>
+                  <th>Téléphone</th>
+                  <th>Date Naissance</th>
+                  <th>Années de Service</th>
+                  <th>Catégorie Permis</th>
+                  <th>Expiration Permis</th>
+                  <th>Véhicule Affecté</th>
+                  <th>Immatriculation</th>
+                  <th>Ville</th>
+                </tr>
+              </thead>
+              <tbody id="chBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="chCardsView" style="display:none">
+        <div class="chauffeur-grid" id="chCards"></div>
+      </div>
+    </div>
+
+    <!-- ── VISITE TECHNIQUE ── -->
+    <div id="page-visite" class="page">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">✅</div>
+          <div>
+            <h2>Visite Technique</h2>
+            <p>Formulaire de contrôle des 23 points</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn-secondary" onclick="resetVT()">RÉINITIALISER</button>
+          <button class="btn-primary" onclick="printVT()">IMPRIMER</button>
+        </div>
+      </div>
+      <div class="vt-info-row">
+        <div class="input-group">
+          <label>Immatriculation</label>
+          <select id="vtImat" onchange="fillVTInfo()" style="background:var(--bg-deep);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text-primary);outline:none;">
+            <option value="">— Sélectionner —</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Chauffeur</label>
+          <input type="text" id="vtChauffeur" readonly>
+        </div>
+        <div class="input-group">
+          <label>Date</label>
+          <input type="date" id="vtDate">
+        </div>
+        <div class="input-group">
+          <label>Kilométrage</label>
+          <input type="number" id="vtKm" placeholder="km actuel">
+        </div>
+      </div>
+      <div class="vt-grid">
+        <div class="vt-form">
+          <div class="vt-header">Points de Contrôle (1–12)</div>
+          <div class="vt-checks" id="vtChecks1"></div>
+        </div>
+        <div class="vt-form">
+          <div class="vt-header">Points de Contrôle (13–23)</div>
+          <div class="vt-checks" id="vtChecks2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADMIN ── -->
+    <div id="page-admin" class="page">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">🔐</div>
+          <div>
+            <h2>Administration</h2>
+            <p>Gestion des accès — Master Admin uniquement</p>
+          </div>
+        </div>
+      </div>
+      <div class="admin-banner">
+        <div class="icon">🛡️</div>
+        <p><strong>Accès réservé au Master Admin.</strong> Vous pouvez créer des comptes utilisateurs, générer des mots de passe sécurisés et gérer les droits d'accès au système.</p>
+      </div>
+
+      <div class="admin-grid">
+        <!-- Créer utilisateur -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span>➕</span>
+            <h3>Créer un Utilisateur</h3>
+          </div>
+          <div class="admin-card-body">
+            <div class="admin-form-row">
+              <div class="input-group">
+                <label>Identifiant</label>
+                <input type="text" id="newUserId" placeholder="ex: chef_parc">
+              </div>
+              <div class="input-group">
+                <label>Nom complet</label>
+                <input type="text" id="newUserName" placeholder="Prénom Nom">
+              </div>
+            </div>
+            <div class="admin-form-row">
+              <div class="input-group">
+                <label>Rôle</label>
+                <select id="newUserRole">
+                  <option value="Chef de Parc">Chef de Parc</option>
+                  <option value="Coordinateur">Coordinateur</option>
+                  <option value="Mécanicien">Mécanicien</option>
+                  <option value="Chauffeur">Chauffeur</option>
+                  <option value="Viewer">Visiteur</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label>Accès aux modules</label>
+                <select id="newUserAccess">
+                  <option value="all">Tous les modules</option>
+                  <option value="parc">Parc + Chauffeurs</option>
+                  <option value="entretien">Entretien + Carburant</option>
+                  <option value="readonly">Lecture seule</option>
+                </select>
+              </div>
+            </div>
+            <div class="admin-form-row single">
+              <div class="input-group">
+                <label>Mot de passe généré</label>
+                <div style="display:flex;gap:8px">
+                  <input type="text" id="newUserPass" readonly placeholder="Cliquer sur Générer">
+                  <button class="btn-cyan" onclick="generatePass()">GÉNÉRER</button>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:4px">
+              <button class="btn-primary" onclick="createUser()">CRÉER L'UTILISATEUR</button>
+              <button class="btn-secondary" onclick="clearUserForm()">EFFACER</button>
+            </div>
+            <div id="userAlert" class="alert"></div>
+          </div>
+        </div>
+
+        <!-- Modifier mot de passe Master Admin -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <span>🔑</span>
+            <h3>Changer Mon Mot de Passe</h3>
+          </div>
+          <div class="admin-card-body">
+            <div class="admin-form-row single">
+              <div class="input-group">
+                <label>Mot de passe actuel</label>
+                <input type="password" id="oldPass" placeholder="••••••••">
+              </div>
+            </div>
+            <div class="admin-form-row">
+              <div class="input-group">
+                <label>Nouveau mot de passe</label>
+                <input type="password" id="newPass1" placeholder="••••••••">
+              </div>
+              <div class="input-group">
+                <label>Confirmer</label>
+                <input type="password" id="newPass2" placeholder="••••••••">
+              </div>
+            </div>
+            <button class="btn-primary" onclick="changeAdminPass()">METTRE À JOUR</button>
+            <div id="passAlert" class="alert"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liste utilisateurs -->
+      <div class="admin-card" style="margin-top:24px">
+        <div class="admin-card-header">
+          <span>👥</span>
+          <h3>Utilisateurs Enregistrés</h3>
+        </div>
+        <div class="admin-card-body">
+          <div class="user-list" id="userList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /appScreen -->
+
+<script>
+// ════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════
+const PARC = [
+  {n:1,imat:'27464-A-42',type:'TC',marque:'Mitsubishi L200',vin:'MA189083535',annee:'2015',ville:'Had Soualem',statut:'Hors service',chauffeur:'Mohamed Bennani',remp1:'Youssef El Alami',remp2:'Hassan Cherkaoui',permis:'B',km:211624,vidange_der:208433,vidange_pro:218433,entretien:'45978',carburant:'Électrique',cap_res:100,niv_carb:41,conso:6,pneus:18,press:36,batteries:1,voltage:24,extincteurs:1,poids_ext:6,exp_ext:'27/07/2026',huile:6.1,bat_serie:'varta'},
+  {n:2,imat:'67896-W-32',type:'PL',marque:'Man TGS',vin:'MA661998705',annee:'2012',ville:'Casablanca',statut:'En révision',chauffeur:'Youssef El Alami',remp1:'Hassan Cherkaoui',remp2:'Rachid Tazi',permis:'CE',km:254588,vidange_der:253790,vidange_pro:259016,entretien:'07/01/2024',carburant:'Électrique',cap_res:50,niv_carb:30,conso:15.9,pneus:4,press:36,batteries:1,voltage:24,extincteurs:2,poids_ext:2,exp_ext:'14/11/2025',huile:6,bat_serie:'tectra'},
+  {n:3,imat:'32824-B-62',type:'PL',marque:'Peugeot 308',vin:'MA332274150',annee:'2015',ville:'Kénitra',statut:'En révision',chauffeur:'Hassan Cherkaoui',remp1:'Rachid Tazi',remp2:'Khalid Bensouda',permis:'CE',km:226066,vidange_der:223984,vidange_pro:230027,entretien:'13/06/2025',carburant:'Électrique',cap_res:60,niv_carb:47,conso:9.4,pneus:18,press:35,batteries:1,voltage:24,extincteurs:1,poids_ext:6,exp_ext:'06/11/2025',huile:11,bat_serie:'narva'},
+  {n:4,imat:'98381-B-59',type:'EC',marque:'Mercedes Sprinter',vin:'MA806755577',annee:'2016',ville:'Rabat',statut:'Hors service',chauffeur:'Rachid Tazi',remp1:'Khalid Bensouda',remp2:'Omar El Fassi',permis:'BE',km:130513,vidange_der:124512,vidange_pro:136869,entretien:'06/05/2025',carburant:'Électrique',cap_res:120,niv_carb:37,conso:9.6,pneus:18,press:40,batteries:2,voltage:12,extincteurs:2,poids_ext:50,exp_ext:'28/06/2028',huile:11.5,bat_serie:''},
+  {n:5,imat:'55290-H-10',type:'PL',marque:'Renault Clio',vin:'MA212905579',annee:'2010',ville:'Casablanca',statut:'En révision',chauffeur:'Khalid Bensouda',remp1:'Omar El Fassi',remp2:'Abdellah Mrani',permis:'D',km:148830,vidange_der:146125,vidange_pro:150107,entretien:'03/10/2024',carburant:'Électrique',cap_res:200,niv_carb:62,conso:25.6,pneus:6,press:36,batteries:2,voltage:12,extincteurs:2,poids_ext:50,exp_ext:'28/12/2028',huile:10.6,bat_serie:''},
+  {n:6,imat:'53130-B-26',type:'VL',marque:'Isuzu D-Max',vin:'MA814051343',annee:'2017',ville:'Meknès',statut:'Hors service',chauffeur:'Omar El Fassi',remp1:'Abdellah Mrani',remp2:'Karim Berrada',permis:'C',km:218916,vidange_der:213733,vidange_pro:223483,entretien:'03/09/2024',carburant:'Électrique',cap_res:200,niv_carb:68,conso:26.7,pneus:6,press:38,batteries:2,voltage:24,extincteurs:1,poids_ext:6,exp_ext:'15/10/2028',huile:6.6,bat_serie:''},
+  {n:7,imat:'87089-A-60',type:'EC',marque:'Dacia Logan',vin:'MA395806119',annee:'2014',ville:'Agadir',statut:'Opérationnel',chauffeur:'Abdellah Mrani',remp1:'Karim Berrada',remp2:'Noureddine Lahlou',permis:'EC',km:18294,vidange_der:13867,vidange_pro:23673,entretien:'12/02/2024',carburant:'Électrique',cap_res:150,niv_carb:27,conso:17.3,pneus:10,press:35,batteries:1,voltage:24,extincteurs:1,poids_ext:50,exp_ext:'25/07/2026',huile:15.3,bat_serie:''},
+  {n:8,imat:'40350-W-87',type:'VL',marque:'Dacia Duster',vin:'MA951778631',annee:'2020',ville:'Agadir',statut:'En révision',chauffeur:'Karim Berrada',remp1:'Noureddine Lahlou',remp2:'Saad El Idrissi',permis:'B',km:29345,vidange_der:24182,vidange_pro:36149,entretien:'26/04/2025',carburant:'Électrique',cap_res:400,niv_carb:55,conso:23.2,pneus:10,press:35,batteries:2,voltage:12,extincteurs:2,poids_ext:5,exp_ext:'24/02/2026',huile:11,bat_serie:''},
+  {n:9,imat:'82876-D-47',type:'VL',marque:'Renault Clio',vin:'MA261863597',annee:'2018',ville:'Meknès',statut:'Hors service',chauffeur:'Noureddine Lahlou',remp1:'Saad El Idrissi',remp2:'Hamid Bouazza',permis:'EC',km:169620,vidange_der:164370,vidange_pro:176473,entretien:'22/01/2025',carburant:'Électrique',cap_res:80,niv_carb:46,conso:10.3,pneus:4,press:30,batteries:2,voltage:12,extincteurs:2,poids_ext:6,exp_ext:'22/06/2025',huile:9.3,bat_serie:''},
+  {n:10,imat:'36481-B-33',type:'EC',marque:'Volvo FH',vin:'MA350521582',annee:'2019',ville:'Casablanca',statut:'En panne',chauffeur:'Saad El Idrissi',remp1:'Hamid Bouazza',remp2:'Aziz Chraibi',permis:'D',km:97896,vidange_der:92560,vidange_pro:103711,entretien:'14/03/2025',carburant:'Électrique',cap_res:60,niv_carb:13,conso:17.9,pneus:6,press:100,batteries:2,voltage:12,extincteurs:1,poids_ext:50,exp_ext:'02/09/2028',huile:17.1,bat_serie:''},
+  {n:11,imat:'99981-D-31',type:'PL',marque:'Volvo FH',vin:'MA141059868',annee:'2010',ville:'Fès',statut:'Opérationnel',chauffeur:'Hamid Bouazza',remp1:'Aziz Chraibi',remp2:'Mustapha El Ouafi',permis:'CE',km:103004,vidange_der:96522,vidange_pro:104213,entretien:'02/06/2024',carburant:'Électrique',cap_res:80,niv_carb:32,conso:18.9,pneus:6,press:36,batteries:2,voltage:24,extincteurs:1,poids_ext:5,exp_ext:'09/06/2027',huile:10.9,bat_serie:''},
+  {n:12,imat:'44128-B-67',type:'VL',marque:'Dacia Logan',vin:'MA327502064',annee:'2012',ville:'Agadir',statut:'Opérationnel',chauffeur:'Aziz Chraibi',remp1:'Mustapha El Ouafi',remp2:'Driss Kettani',permis:'C',km:95516,vidange_der:91769,vidange_pro:96893,entretien:'11/10/2025',carburant:'Électrique',cap_res:150,niv_carb:77,conso:16.7,pneus:6,press:38,batteries:1,voltage:24,extincteurs:1,poids_ext:6,exp_ext:'11/07/2026',huile:11.5,bat_serie:''},
+  {n:13,imat:'79621-B-18',type:'TC',marque:'Isuzu D-Max',vin:'MA898546761',annee:'2019',ville:'Fès',statut:'Opérationnel',chauffeur:'Mustapha El Ouafi',remp1:'Driss Kettani',remp2:'Brahim Hajji',permis:'D',km:149795,vidange_der:149018,vidange_pro:156638,entretien:'03/07/2024',carburant:'Électrique',cap_res:150,niv_carb:44,conso:24.8,pneus:10,press:32,batteries:1,voltage:24,extincteurs:2,poids_ext:12,exp_ext:'20/04/2026',huile:10.2,bat_serie:''},
+  {n:14,imat:'46671-H-72',type:'VL',marque:'Renault Master',vin:'MA787371864',annee:'2020',ville:'Casablanca',statut:'Opérationnel',chauffeur:'Driss Kettani',remp1:'Brahim Hajji',remp2:'Said Benkirane',permis:'B',km:162226,vidange_der:160074,vidange_pro:164526,entretien:'01/07/2025',carburant:'Électrique',cap_res:200,niv_carb:85,conso:26.4,pneus:4,press:32,batteries:1,voltage:24,extincteurs:1,poids_ext:9,exp_ext:'22/11/2025',huile:4.3,bat_serie:''},
+  {n:15,imat:'26205-A-87',type:'VL',marque:'Fiat Ducato',vin:'MA297963181',annee:'2020',ville:'Tanger',statut:'Opérationnel',chauffeur:'Brahim Hajji',remp1:'Said Benkirane',remp2:'Younes El Ghazi',permis:'CE',km:153022,vidange_der:147624,vidange_pro:156518,entretien:'10/03/2024',carburant:'Électrique',cap_res:400,niv_carb:45,conso:14.6,pneus:18,press:35,batteries:1,voltage:24,extincteurs:2,poids_ext:5,exp_ext:'28/09/2027',huile:15.6,bat_serie:''},
+  {n:16,imat:'20793-A-64',type:'PL',marque:'Renault Clio',vin:'MA987136285',annee:'2012',ville:'Oujda',statut:'Hors service',chauffeur:'Said Benkirane',remp1:'Younes El Ghazi',remp2:'Amine Sebti',permis:'BE',km:12175,vidange_der:4543,vidange_pro:13704,entretien:'22/11/2024',carburant:'Électrique',cap_res:150,niv_carb:84,conso:25.1,pneus:4,press:42,batteries:1,voltage:12,extincteurs:1,poids_ext:5,exp_ext:'10/04/2025',huile:6.1,bat_serie:''},
+  {n:17,imat:'27133-A-99',type:'EC',marque:'Renault Master',vin:'MA149168921',annee:'2016',ville:'Fès',statut:'En révision',chauffeur:'Younes El Ghazi',remp1:'Amine Sebti',remp2:'Tariq Zniber',permis:'B',km:263407,vidange_der:262192,vidange_pro:267180,entretien:'18/06/2025',carburant:'Électrique',cap_res:400,niv_carb:54,conso:22.4,pneus:18,press:36,batteries:1,voltage:24,extincteurs:1,poids_ext:50,exp_ext:'17/09/2027',huile:4.3,bat_serie:''},
+  {n:18,imat:'72239-H-64',type:'TC',marque:'Fiat Ducato',vin:'MA354362001',annee:'2019',ville:'Agadir',statut:'Hors service',chauffeur:'Amine Sebti',remp1:'Tariq Zniber',remp2:'Mehdi Filali',permis:'BE',km:116156,vidange_der:111572,vidange_pro:119218,entretien:'04/10/2025',carburant:'Électrique',cap_res:80,niv_carb:21,conso:8,pneus:10,press:110,batteries:1,voltage:12,extincteurs:2,poids_ext:5,exp_ext:'03/05/2025',huile:16.9,bat_serie:''},
+  {n:19,imat:'44749-D-65',type:'EC',marque:'Mitsubishi L200',vin:'MA950393736',annee:'2022',ville:'Rabat',statut:'Hors service',chauffeur:'Tariq Zniber',remp1:'Mehdi Filali',remp2:'Adil El Khadir',permis:'B',km:86667,vidange_der:81825,vidange_pro:92734,entretien:'12/09/2024',carburant:'Électrique',cap_res:100,niv_carb:26,conso:17.3,pneus:4,press:90,batteries:2,voltage:12,extincteurs:2,poids_ext:50,exp_ext:'03/08/2027',huile:7.4,bat_serie:''},
+  {n:20,imat:'38858-B-91',type:'TC',marque:'Ford Transit',vin:'MA246225358',annee:'2022',ville:'Marrakech',statut:'En révision',chauffeur:'Mehdi Filali',remp1:'Adil El Khadir',remp2:'Reda Benali',permis:'D',km:272370,vidange_der:270612,vidange_pro:278833,entretien:'19/06/2024',carburant:'Électrique',cap_res:50,niv_carb:87,conso:12.4,pneus:10,press:30,batteries:1,voltage:12,extincteurs:2,poids_ext:2,exp_ext:'21/01/2026',huile:12,bat_serie:''},
+  {n:21,imat:'64061-D-87',type:'PL',marque:'Mercedes Sprinter',vin:'MA522429014',annee:'2015',ville:'Casablanca',statut:'Hors service',chauffeur:'Adil El Khadir',remp1:'Reda Benali',remp2:'Hicham Fennich',permis:'D',km:145201,vidange_der:142927,vidange_pro:149069,entretien:'13/03/2025',carburant:'Électrique',cap_res:300,niv_carb:100,conso:28,pneus:4,press:42,batteries:2,voltage:12,extincteurs:1,poids_ext:50,exp_ext:'23/01/2026',huile:11.4,bat_serie:''},
+  {n:22,imat:'62290-W-95',type:'PL',marque:'Scania R450',vin:'MA365607952',annee:'2022',ville:'Oujda',statut:'En révision',chauffeur:'Reda Benali',remp1:'Hicham Fennich',remp2:'Jalal Tahiri',permis:'CE',km:183828,vidange_der:181988,vidange_pro:186512,entretien:'06/04/2025',carburant:'Électrique',cap_res:80,niv_carb:74,conso:24.3,pneus:4,press:30,batteries:2,voltage:24,extincteurs:2,poids_ext:12,exp_ext:'11/06/2026',huile:13.9,bat_serie:''},
+  {n:23,imat:'82897-H-86',type:'EC',marque:'Fiat Ducato',vin:'MA656931407',annee:'2020',ville:'Agadir',statut:'Hors service',chauffeur:'Hicham Fennich',remp1:'Jalal Tahiri',remp2:'Nabil El Mansouri',permis:'CE',km:241484,vidange_der:235123,vidange_pro:246672,entretien:'20/10/2025',carburant:'Électrique',cap_res:150,niv_carb:93,conso:19.6,pneus:6,press:35,batteries:1,voltage:24,extincteurs:2,poids_ext:50,exp_ext:'27/03/2028',huile:17.9,bat_serie:''},
+  {n:24,imat:'35601-B-25',type:'TC',marque:'Isuzu D-Max',vin:'MA306701215',annee:'2010',ville:'Kénitra',statut:'Hors service',chauffeur:'Jalal Tahiri',remp1:'Nabil El Mansouri',remp2:'Soufiane Naciri',permis:'C',km:18080,vidange_der:11194,vidange_pro:23115,entretien:'20/04/2024',carburant:'Électrique',cap_res:200,niv_carb:17,conso:17.9,pneus:4,press:40,batteries:1,voltage:12,extincteurs:1,poids_ext:5,exp_ext:'25/05/2025',huile:8.8,bat_serie:''},
+  {n:25,imat:'62420-D-57',type:'VL',marque:'Renault Master',vin:'MA840881276',annee:'2015',ville:'Oujda',statut:'En révision',chauffeur:'Nabil El Mansouri',remp1:'Soufiane Naciri',remp2:'Jawad Benhida',permis:'EC',km:248905,vidange_der:244513,vidange_pro:252645,entretien:'01/03/2025',carburant:'Électrique',cap_res:60,niv_carb:37,conso:11.2,pneus:10,press:30,batteries:2,voltage:24,extincteurs:1,poids_ext:9,exp_ext:'01/05/2025',huile:8.6,bat_serie:''},
+  {n:26,imat:'19445-A-97',type:'PL',marque:'Toyota Hilux',vin:'MA304728228',annee:'2015',ville:'Agadir',statut:'Opérationnel',chauffeur:'Soufiane Naciri',remp1:'Jawad Benhida',remp2:'Ilias Raji',permis:'CE',km:173856,vidange_der:170651,vidange_pro:176044,entretien:'09/08/2024',carburant:'Électrique',cap_res:400,niv_carb:71,conso:9,pneus:10,press:110,batteries:1,voltage:12,extincteurs:1,poids_ext:5,exp_ext:'18/05/2028',huile:6.4,bat_serie:''},
+  {n:27,imat:'42555-D-65',type:'EC',marque:'Isuzu D-Max',vin:'MA647168054',annee:'2023',ville:'Tétouan',statut:'Opérationnel',chauffeur:'Jawad Benhida',remp1:'Ilias Raji',remp2:'Ayoub El Yazami',permis:'CE',km:147726,vidange_der:146266,vidange_pro:152182,entretien:'09/07/2024',carburant:'Électrique',cap_res:100,niv_carb:17,conso:14.9,pneus:6,press:36,batteries:1,voltage:12,extincteurs:2,poids_ext:9,exp_ext:'13/06/2026',huile:17.9,bat_serie:''},
+  {n:28,imat:'11935-A-21',type:'VL',marque:'Peugeot 308',vin:'MA150365928',annee:'2019',ville:'Fès',statut:'Opérationnel',chauffeur:'Ilias Raji',remp1:'Ayoub El Yazami',remp2:'Zakaria Ouazzani',permis:'CE',km:103613,vidange_der:99239,vidange_pro:108612,entretien:'06/08/2024',carburant:'Électrique',cap_res:50,niv_carb:65,conso:31.7,pneus:4,press:38,batteries:1,voltage:12,extincteurs:1,poids_ext:2,exp_ext:'24/05/2027',huile:14.9,bat_serie:''},
+  {n:29,imat:'40854-W-69',type:'PL',marque:'Renault Clio',vin:'MA183124726',annee:'2023',ville:'Kénitra',statut:'En panne',chauffeur:'Ayoub El Yazami',remp1:'Zakaria Ouazzani',remp2:'Othmane Bakkali',permis:'BE',km:117130,vidange_der:112534,vidange_pro:119913,entretien:'28/05/2024',carburant:'Électrique',cap_res:50,niv_carb:93,conso:19.9,pneus:6,press:40,batteries:1,voltage:12,extincteurs:1,poids_ext:9,exp_ext:'26/02/2026',huile:6.8,bat_serie:''},
+  {n:30,imat:'80421-D-71',type:'EC',marque:'Dacia Duster',vin:'MA957952152',annee:'2014',ville:'Kénitra',statut:'En révision',chauffeur:'Zakaria Ouazzani',remp1:'Othmane Bakkali',remp2:'Anass Hajjaj',permis:'B',km:145069,vidange_der:143669,vidange_pro:151366,entretien:'10/07/2024',carburant:'Électrique',cap_res:400,niv_carb:69,conso:18,pneus:6,press:90,batteries:1,voltage:12,extincteurs:1,poids_ext:12,exp_ext:'08/09/2026',huile:11.3,bat_serie:''},
+  {n:31,imat:'55006-D-96',type:'PL',marque:'Toyota Hilux',vin:'MA906873464',annee:'2014',ville:'Tanger',statut:'En révision',chauffeur:'Othmane Bakkali',remp1:'Anass Hajjaj',remp2:'Taha El Bouazzaoui',permis:'B',km:264884,vidange_der:260683,vidange_pro:265828,entretien:'17/08/2025',carburant:'Électrique',cap_res:150,niv_carb:31,conso:21.2,pneus:6,press:80,batteries:1,voltage:24,extincteurs:1,poids_ext:9,exp_ext:'09/11/2027',huile:10.4,bat_serie:''},
+  {n:32,imat:'23494-H-23',type:'PL',marque:'Scania R450',vin:'MA126598777',annee:'2020',ville:'Tanger',statut:'Hors service',chauffeur:'Anass Hajjaj',remp1:'Taha El Bouazzaoui',remp2:'Simo Lamrani',permis:'EC',km:207046,vidange_der:200713,vidange_pro:213631,entretien:'04/03/2024',carburant:'Électrique',cap_res:100,niv_carb:75,conso:10.9,pneus:18,press:30,batteries:1,voltage:12,extincteurs:2,poids_ext:12,exp_ext:'28/10/2027',huile:7.4,bat_serie:''},
+  {n:33,imat:'20957-H-33',type:'TC',marque:'Man TGS',vin:'MA650387392',annee:'2013',ville:'Tétouan',statut:'Hors service',chauffeur:'Taha El Bouazzaoui',remp1:'Simo Lamrani',remp2:'Fouad Amrani',permis:'D',km:145874,vidange_der:140457,vidange_pro:151479,entretien:'16/04/2025',carburant:'Électrique',cap_res:50,niv_carb:21,conso:11.4,pneus:6,press:100,batteries:2,voltage:24,extincteurs:1,poids_ext:2,exp_ext:'03/06/2028',huile:6,bat_serie:''},
+  {n:34,imat:'19883-W-75',type:'TC',marque:'Dacia Logan',vin:'MA672086185',annee:'2013',ville:'Oujda',statut:'En révision',chauffeur:'Simo Lamrani',remp1:'Fouad Amrani',remp2:'Mohamed Bennani',permis:'EC',km:264661,vidange_der:256793,vidange_pro:270775,entretien:'13/03/2024',carburant:'Électrique',cap_res:120,niv_carb:54,conso:29.1,pneus:18,press:42,batteries:2,voltage:12,extincteurs:1,poids_ext:2,exp_ext:'15/10/2028',huile:10.7,bat_serie:''},
+  {n:35,imat:'11326-D-78',type:'TC',marque:'Renault Master',vin:'MA725415069',annee:'2023',ville:'Tanger',statut:'En révision',chauffeur:'Fouad Amrani',remp1:'Mohamed Bennani',remp2:'Youssef El Alami',permis:'BE',km:28735,vidange_der:22202,vidange_pro:33638,entretien:'02/09/2025',carburant:'Électrique',cap_res:100,niv_carb:27,conso:17.3,pneus:4,press:42,batteries:1,voltage:24,extincteurs:2,poids_ext:9,exp_ext:'12/10/2028',huile:16.9,bat_serie:''},
+];
+
+const ENTRETIEN = [
+  {n:1,imat:'27464-A-42',type:'TC',marque:'Mitsubishi L200',travaux:'Remplacement batterie',date:'17/11/2024',km:210133,km_pro:216266,cout:8070,presta:'Garage Central Casablanca'},
+  {n:2,imat:'67896-W-32',type:'PL',marque:'Man TGS',travaux:'Révision complète',date:'07/01/2024',km:253810,km_pro:259016,cout:14654,presta:'Renault Maroc Centre'},
+  {n:3,imat:'32824-B-62',type:'PL',marque:'Peugeot 308',travaux:'Graissage général',date:'13/06/2025',km:224502,km_pro:230027,cout:4271,presta:'Atelier Mobile Rabat'},
+  {n:4,imat:'98381-B-59',type:'EC',marque:'Mercedes Sprinter',travaux:'Remplacement batterie',date:'06/05/2025',km:126999,km_pro:136869,cout:11395,presta:'Station Afriquia'},
+  {n:5,imat:'55290-H-10',type:'PL',marque:'Renault Clio',travaux:'Remplacement batterie',date:'03/10/2024',km:146653,km_pro:150107,cout:12897,presta:'Station Afriquia'},
+  {n:6,imat:'53130-B-26',type:'VL',marque:'Isuzu D-Max',travaux:'Vidange + Filtre à huile',date:'03/09/2024',km:216766,km_pro:223483,cout:11651,presta:'Service Mercedes Maroc'},
+  {n:7,imat:'87089-A-60',type:'EC',marque:'Dacia Logan',travaux:'Révision complète',date:'12/02/2024',km:15914,km_pro:23673,cout:2960,presta:'Station Afriquia'},
+  {n:8,imat:'40350-W-87',type:'VL',marque:'Dacia Duster',travaux:'Vidange + Filtre à huile',date:'26/04/2025',km:27928,km_pro:36149,cout:6996,presta:'Service Mercedes Maroc'},
+  {n:9,imat:'82876-D-47',type:'VL',marque:'Renault Clio',travaux:'Réparation système de freinage',date:'22/01/2025',km:168150,km_pro:176473,cout:11113,presta:'Station Afriquia'},
+  {n:10,imat:'36481-B-33',type:'EC',marque:'Volvo FH',travaux:'Remplacement pneus',date:'14/03/2025',km:97422,km_pro:103711,cout:10516,presta:'Atelier Mobile Rabat'},
+  {n:11,imat:'99981-D-31',type:'PL',marque:'Volvo FH',travaux:'Réparation système de freinage',date:'02/06/2024',km:100596,km_pro:104213,cout:6472,presta:'Renault Maroc Centre'},
+  {n:12,imat:'44128-B-67',type:'VL',marque:'Dacia Logan',travaux:'Remplacement courroie de distribution',date:'11/10/2025',km:92929,km_pro:96893,cout:9647,presta:'Atelier Mobile Rabat'},
+  {n:13,imat:'79621-B-18',type:'TC',marque:'Isuzu D-Max',travaux:'Réparation système de freinage',date:'03/07/2024',km:146651,km_pro:156638,cout:11865,presta:'Service Mercedes Maroc'},
+  {n:14,imat:'46671-H-72',type:'VL',marque:'Renault Master',travaux:'Graissage général',date:'01/07/2025',km:158083,km_pro:164526,cout:2077,presta:'Renault Maroc Centre'},
+  {n:15,imat:'26205-A-87',type:'VL',marque:'Fiat Ducato',travaux:"Nettoyage filtre à air",date:'10/03/2024',km:151095,km_pro:156518,cout:13301,presta:'Atelier Mobile Rabat'},
+  {n:16,imat:'20793-A-64',type:'PL',marque:'Renault Clio',travaux:'Vidange + Filtre à huile',date:'22/11/2024',km:8743,km_pro:13704,cout:11128,presta:'Atelier Mobile Rabat'},
+  {n:17,imat:'27133-A-99',type:'EC',marque:'Renault Master',travaux:'Vidange + Filtre à huile',date:'18/06/2025',km:259482,km_pro:267180,cout:6122,presta:'Renault Maroc Centre'},
+  {n:18,imat:'72239-H-64',type:'TC',marque:'Fiat Ducato',travaux:"Nettoyage filtre à air",date:'04/10/2025',km:113313,km_pro:119218,cout:9266,presta:'Service Mercedes Maroc'},
+  {n:19,imat:'44749-D-65',type:'EC',marque:'Mitsubishi L200',travaux:'Vidange + Filtre à huile',date:'12/09/2024',km:85579,km_pro:92734,cout:3818,presta:'Atelier Mobile Rabat'},
+  {n:20,imat:'38858-B-91',type:'TC',marque:'Ford Transit',travaux:'Graissage général',date:'19/06/2024',km:267977,km_pro:278833,cout:4824,presta:'Renault Maroc Centre'},
+  {n:21,imat:'64061-D-87',type:'PL',marque:'Mercedes Sprinter',travaux:'Visite technique (CT)',date:'13/03/2025',km:144470,km_pro:149069,cout:10848,presta:'Renault Maroc Centre'},
+  {n:22,imat:'62290-W-95',type:'PL',marque:'Scania R450',travaux:'Graissage général',date:'06/04/2025',km:180497,km_pro:186512,cout:12445,presta:'Station Afriquia'},
+  {n:23,imat:'82897-H-86',type:'EC',marque:'Fiat Ducato',travaux:'Réparation système de freinage',date:'20/10/2025',km:239327,km_pro:246672,cout:6159,presta:'Garage Central Casablanca'},
+  {n:24,imat:'35601-B-25',type:'TC',marque:'Isuzu D-Max',travaux:'Visite technique (CT)',date:'20/04/2024',km:16732,km_pro:23115,cout:5288,presta:'Station Afriquia'},
+  {n:25,imat:'62420-D-57',type:'VL',marque:'Renault Master',travaux:'Graissage général',date:'01/03/2025',km:245996,km_pro:252645,cout:10380,presta:'Station Afriquia'},
+  {n:26,imat:'19445-A-97',type:'PL',marque:'Toyota Hilux',travaux:'Vidange + Filtre à huile',date:'09/08/2024',km:173466,km_pro:176044,cout:5212,presta:'Station Afriquia'},
+  {n:27,imat:'42555-D-65',type:'EC',marque:'Isuzu D-Max',travaux:'Réparation système de freinage',date:'09/07/2024',km:147426,km_pro:152182,cout:9571,presta:'Garage Central Casablanca'},
+  {n:28,imat:'11935-A-21',type:'VL',marque:'Peugeot 308',travaux:'Réparation suspension',date:'06/08/2024',km:102226,km_pro:108612,cout:10949,presta:'Garage Central Casablanca'},
+  {n:29,imat:'40854-W-69',type:'PL',marque:'Renault Clio',travaux:'Réparation suspension',date:'28/05/2024',km:113294,km_pro:119913,cout:10648,presta:'Atelier Mobile Rabat'},
+  {n:30,imat:'80421-D-71',type:'EC',marque:'Dacia Duster',travaux:'Remplacement batterie',date:'10/07/2024',km:144700,km_pro:151366,cout:2673,presta:'Centre Auto Marrakech'},
+  {n:31,imat:'55006-D-96',type:'PL',marque:'Toyota Hilux',travaux:'Remplacement pneus',date:'17/08/2025',km:261784,km_pro:265828,cout:6875,presta:'Station Afriquia'},
+  {n:32,imat:'23494-H-23',type:'PL',marque:'Scania R450',travaux:'Réparation système de freinage',date:'04/03/2024',km:203183,km_pro:213631,cout:13917,presta:'Atelier Mobile Rabat'},
+  {n:33,imat:'20957-H-33',type:'TC',marque:'Man TGS',travaux:'Réparation système de freinage',date:'16/04/2025',km:142468,km_pro:151479,cout:7185,presta:'Station Afriquia'},
+  {n:34,imat:'19883-W-75',type:'TC',marque:'Dacia Logan',travaux:'Réparation suspension',date:'13/03/2024',km:261321,km_pro:270775,cout:10873,presta:'Service Mercedes Maroc'},
+  {n:35,imat:'11326-D-78',type:'TC',marque:'Renault Master',travaux:'Remplacement batterie',date:'02/09/2025',km:26557,km_pro:33638,cout:6670,presta:'Renault Maroc Centre'},
+];
+
+const CHAUFFEURS = [
+  {n:1,nom:'Mohamed Bennani',tel:'0764039108',nais:'09/09/1968',service:2,permis:'EC',exp:'14/04/2028',vehicule:'Mitsubishi L200',imat:'27464-A-42',ville:'Kénitra'},
+  {n:2,nom:'Youssef El Alami',tel:'0783211868',nais:'27/03/1979',service:13,permis:'CE',exp:'23/08/2026',vehicule:'Man TGS',imat:'67896-W-32',ville:'Casablanca'},
+  {n:3,nom:'Hassan Cherkaoui',tel:'0759791639',nais:'03/03/1996',service:18,permis:'CE',exp:'02/06/2031',vehicule:'Peugeot 308',imat:'32824-B-62',ville:'Kénitra'},
+  {n:4,nom:'Rachid Tazi',tel:'0736101577',nais:'11/04/1979',service:13,permis:'BE',exp:'01/11/2028',vehicule:'Mercedes Sprinter',imat:'98381-B-59',ville:'Rabat'},
+  {n:5,nom:'Khalid Bensouda',tel:'0750227799',nais:'18/11/1998',service:12,permis:'D',exp:'23/10/2030',vehicule:'Renault Clio',imat:'55290-H-10',ville:'Casablanca'},
+  {n:6,nom:'Omar El Fassi',tel:'0625417234',nais:'26/08/1970',service:11,permis:'C',exp:'11/11/2031',vehicule:'Isuzu D-Max',imat:'53130-B-26',ville:'Meknès'},
+  {n:7,nom:'Abdellah Mrani',tel:'0657470447',nais:'27/09/1970',service:21,permis:'EC',exp:'24/11/2026',vehicule:'Dacia Logan',imat:'87089-A-60',ville:'Agadir'},
+  {n:8,nom:'Karim Berrada',tel:'0631667193',nais:'25/08/1979',service:6,permis:'B',exp:'09/06/2030',vehicule:'Dacia Duster',imat:'40350-W-87',ville:'Agadir'},
+  {n:9,nom:'Noureddine Lahlou',tel:'0766250668',nais:'23/04/1973',service:17,permis:'EC',exp:'17/07/2026',vehicule:'Renault Clio',imat:'82876-D-47',ville:'Meknès'},
+  {n:10,nom:'Saad El Idrissi',tel:'0659603516',nais:'06/04/1991',service:17,permis:'D',exp:'19/08/2027',vehicule:'Volvo FH',imat:'36481-B-33',ville:'Casablanca'},
+  {n:11,nom:'Hamid Bouazza',tel:'0734846035',nais:'22/05/1968',service:9,permis:'CE',exp:'19/09/2028',vehicule:'Volvo FH',imat:'99981-D-31',ville:'Fès'},
+  {n:12,nom:'Aziz Chraibi',tel:'0668257942',nais:'22/07/1970',service:4,permis:'C',exp:'23/12/2028',vehicule:'Dacia Logan',imat:'44128-B-67',ville:'Agadir'},
+  {n:13,nom:'Mustapha El Ouafi',tel:'0647889457',nais:'25/12/1982',service:16,permis:'D',exp:'14/06/2030',vehicule:'Isuzu D-Max',imat:'79621-B-18',ville:'Fès'},
+  {n:14,nom:'Driss Kettani',tel:'0648499183',nais:'23/07/1971',service:6,permis:'B',exp:'10/03/2029',vehicule:'Renault Master',imat:'46671-H-72',ville:'Casablanca'},
+  {n:15,nom:'Brahim Hajji',tel:'0677443288',nais:'20/06/1987',service:8,permis:'CE',exp:'17/02/2027',vehicule:'Fiat Ducato',imat:'26205-A-87',ville:'Tanger'},
+  {n:16,nom:'Said Benkirane',tel:'0653437870',nais:'27/04/1977',service:1,permis:'BE',exp:'13/06/2030',vehicule:'Renault Clio',imat:'20793-A-64',ville:'Oujda'},
+  {n:17,nom:'Younes El Ghazi',tel:'0684298422',nais:'23/12/1971',service:11,permis:'B',exp:'24/09/2028',vehicule:'Renault Master',imat:'27133-A-99',ville:'Fès'},
+  {n:18,nom:'Amine Sebti',tel:'0727305232',nais:'22/03/1977',service:5,permis:'BE',exp:'23/11/2026',vehicule:'Fiat Ducato',imat:'72239-H-64',ville:'Agadir'},
+  {n:19,nom:'Tariq Zniber',tel:'0781887350',nais:'03/01/1994',service:2,permis:'B',exp:'07/12/2031',vehicule:'Mitsubishi L200',imat:'44749-D-65',ville:'Rabat'},
+  {n:20,nom:'Mehdi Filali',tel:'0654247603',nais:'27/06/1985',service:19,permis:'D',exp:'27/04/2031',vehicule:'Ford Transit',imat:'38858-B-91',ville:'Marrakech'},
+  {n:21,nom:'Adil El Khadir',tel:'0610811707',nais:'18/08/1982',service:5,permis:'D',exp:'09/12/2029',vehicule:'Mercedes Sprinter',imat:'64061-D-87',ville:'Casablanca'},
+  {n:22,nom:'Reda Benali',tel:'0720834180',nais:'02/12/1969',service:6,permis:'CE',exp:'03/11/2029',vehicule:'Scania R450',imat:'62290-W-95',ville:'Oujda'},
+  {n:23,nom:'Hicham Fennich',tel:'0792497003',nais:'25/02/1983',service:15,permis:'CE',exp:'02/11/2029',vehicule:'Fiat Ducato',imat:'82897-H-86',ville:'Agadir'},
+  {n:24,nom:'Jalal Tahiri',tel:'0634683094',nais:'09/08/1979',service:15,permis:'C',exp:'27/06/2028',vehicule:'Isuzu D-Max',imat:'35601-B-25',ville:'Kénitra'},
+  {n:25,nom:'Nabil El Mansouri',tel:'0789132668',nais:'22/05/1998',service:11,permis:'EC',exp:'11/12/2028',vehicule:'Renault Master',imat:'62420-D-57',ville:'Oujda'},
+  {n:26,nom:'Soufiane Naciri',tel:'0698099915',nais:'05/01/1977',service:2,permis:'CE',exp:'12/08/2027',vehicule:'Toyota Hilux',imat:'19445-A-97',ville:'Agadir'},
+  {n:27,nom:'Jawad Benhida',tel:'0647766579',nais:'02/12/1974',service:17,permis:'CE',exp:'28/06/2029',vehicule:'Isuzu D-Max',imat:'42555-D-65',ville:'Tétouan'},
+  {n:28,nom:'Ilias Raji',tel:'0753036214',nais:'12/03/1990',service:3,permis:'CE',exp:'10/11/2028',vehicule:'Peugeot 308',imat:'11935-A-21',ville:'Fès'},
+  {n:29,nom:'Ayoub El Yazami',tel:'0679465185',nais:'18/01/1989',service:25,permis:'BE',exp:'20/08/2031',vehicule:'Renault Clio',imat:'40854-W-69',ville:'Kénitra'},
+  {n:30,nom:'Zakaria Ouazzani',tel:'0790313708',nais:'03/10/1974',service:2,permis:'B',exp:'25/09/2031',vehicule:'Dacia Duster',imat:'80421-D-71',ville:'Kénitra'},
+  {n:31,nom:'Othmane Bakkali',tel:'0711913977',nais:'13/03/1987',service:25,permis:'B',exp:'18/05/2030',vehicule:'Toyota Hilux',imat:'55006-D-96',ville:'Tanger'},
+  {n:32,nom:'Anass Hajjaj',tel:'0785532956',nais:'26/04/1986',service:7,permis:'EC',exp:'16/01/2028',vehicule:'Scania R450',imat:'23494-H-23',ville:'Tanger'},
+  {n:33,nom:'Taha El Bouazzaoui',tel:'0789059572',nais:'11/12/1973',service:20,permis:'D',exp:'15/03/2031',vehicule:'Man TGS',imat:'20957-H-33',ville:'Tétouan'},
+  {n:34,nom:'Simo Lamrani',tel:'0652025677',nais:'21/12/1989',service:13,permis:'EC',exp:'12/12/2026',vehicule:'Dacia Logan',imat:'19883-W-75',ville:'Oujda'},
+  {n:35,nom:'Fouad Amrani',tel:'0772166699',nais:'28/12/1969',service:2,permis:'BE',exp:'16/03/2027',vehicule:'Renault Master',imat:'11326-D-78',ville:'Tanger'},
+];
+
+const VT_POINTS = [
+  'Niveau carburant + compteur kilométrique',
+  'État pneus (pression / usure / dommages)',
+  'Niveau huile moteur',
+  'Niveau liquide de refroidissement',
+  'Niveau liquide de frein',
+  'Niveau lave-glace',
+  'État des batteries (tension)',
+  'Éclairage avant (phares / feux de croisement)',
+  'Éclairage arrière (feux stop / clignotants)',
+  'Essuie-glaces et lave-glace fonctionnels',
+  'Test freins (vitesse réduite)',
+  'Klaxon et équipements de sécurité',
+  'Rétroviseurs (position et état)',
+  'Ceintures de sécurité',
+  'Triangle de sécurité présent',
+  'Extincteur (présence / date validité)',
+  'Lot de bord complet',
+  'Carte grise à bord',
+  'Assurance valide (vignette)',
+  'Vignette de contrôle technique (CT)',
+  'Propreté intérieure et extérieure',
+  'Suspension (bruits anormaux)',
+  'Direction (jeu / alignement)',
+];
+
+const FUEL_DATA = PARC.map(v => ({
+  n: v.n, imat: v.imat, type: v.type, marque: v.marque,
+  carburant: ['Gasoil','Essence','GPL','Électrique'][v.n % 4 === 0 ? 3 : v.n % 4 === 1 ? 0 : v.n % 4 === 2 ? 1 : 2],
+  cap: v.cap_res, niv_pct: v.niv_carb, niv_l: Math.round(v.cap_res * v.niv_carb/100),
+  conso: v.conso
+}));
+// override with real fuel types from sheet
+const FUEL_TYPES_REAL = ['Gasoil','Gasoil','GPL','Électrique','GPL','Électrique','Essence','Gasoil','Gasoil','GPL','Essence','Essence','GPL','Gasoil','Électrique','Gasoil','Électrique','Électrique','GPL','Électrique','Essence','Essence','GPL','Gasoil','GPL','Électrique','Gasoil','Gasoil','Électrique','Gasoil','GPL','Électrique','Essence','Gasoil','GPL'];
+FUEL_DATA.forEach((f,i) => { f.carburant = FUEL_TYPES_REAL[i]; });
+
+// ════════════════════════════════════════════
+//  AUTH SYSTEM
+// ════════════════════════════════════════════
+const AUTH_KEY = 'pl_auth';
+const USERS_KEY = 'pl_users';
+
+function loadUsers() {
+  const stored = localStorage.getItem(USERS_KEY);
+  if (stored) return JSON.parse(stored);
+  const defaultUsers = {
+    'rami': { name: 'Mohamed Amine Rami', role: 'Master Admin', pass: 'RAMI2026', isAdmin: true },
+  };
+  localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
+  return defaultUsers;
+}
+
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+let currentUser = null;
+
+function doLogin() {
+  const uid = document.getElementById('loginUser').value.trim();
+  const pw = document.getElementById('loginPass').value.trim();
+  const users = loadUsers();
+  const u = users[uid.toLowerCase()];
+  if (u && u.pass === pw) {
+    currentUser = { id: uid, ...u };
+    localStorage.setItem(AUTH_KEY, JSON.stringify(currentUser));
+    startApp();
+  } else {
+    document.getElementById('loginError').classList.add('show');
+    document.getElementById('loginPass').value = '';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') doLogin();
+});
+
+function doLogout() {
+  localStorage.removeItem(AUTH_KEY);
+  currentUser = null;
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').classList.remove('show');
+}
+
+function startApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+  document.getElementById('topUser').textContent = currentUser.name;
+  document.getElementById('topRole').textContent = currentUser.role;
+  const adminTab = document.getElementById('adminTab');
+  adminTab.style.display = currentUser.isAdmin ? 'flex' : 'none';
+  initAll();
+}
+
+// Check session
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem(AUTH_KEY);
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      const users = loadUsers();
+      const u = users[currentUser.id.toLowerCase()];
+      if (u && u.pass === currentUser.pass) {
+        startApp(); return;
+      }
+    } catch(e) {}
+    localStorage.removeItem(AUTH_KEY);
+  }
+  document.getElementById('loginScreen').style.display = 'flex';
+});
+
+// ════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ════════════════════════════════════════════
+//  INIT ALL
+// ════════════════════════════════════════════
+function initAll() {
+  buildDashboard();
+  buildParc();
+  buildEntretien();
+  buildFuel();
+  buildChauffeurs();
+  buildVT();
+  buildAdmin();
+}
+
+// ════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════
+function statutBadge(s) {
+  const map = { 'Opérationnel':'op', 'En révision':'rev', 'En panne':'pan', 'Hors service':'hs' };
+  const icons = { 'Opérationnel':'●', 'En révision':'◐', 'En panne':'✕', 'Hors service':'○' };
+  return `<span class="badge ${map[s]||'hs'}">${icons[s]||''} ${s}</span>`;
+}
+
+function typeBadge(t) {
+  const map = { 'VL':'type-vl', 'PL':'type-pl', 'EC':'type-ec', 'TC':'type-tc' };
+  return `<span class="badge ${map[t]||''}">${t}</span>`;
+}
+
+function fuelColor(pct) {
+  if (pct > 60) return 'var(--green)';
+  if (pct > 30) return 'var(--yellow)';
+  return 'var(--red)';
+}
+
+function fmtKm(n) { return Number(n).toLocaleString('fr-MA') + ' km'; }
+function fmtMAD(n) { return Number(n).toLocaleString('fr-MA') + ' MAD'; }
+
+// ════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════
+function buildDashboard() {
+  // City breakdown
+  const cities = {};
+  PARC.forEach(v => { cities[v.ville] = (cities[v.ville] || 0) + 1; });
+  const sorted = Object.entries(cities).sort((a,b) => b[1]-a[1]);
+  document.getElementById('cityBreakdown').innerHTML = sorted.map(([c,n]) =>
+    `<div class="city-row"><span class="city-name">${c}</span><span class="city-count">${n} véh.</span></div>`
+  ).join('');
+
+  // Top 5 costs
+  const top5 = [...ENTRETIEN].sort((a,b) => b.cout-a.cout).slice(0,5);
+  document.getElementById('topCosts').innerHTML = top5.map(e =>
+    `<div class="progress-row">
+      <div class="progress-label" style="font-size:11px;width:80px">${e.imat.split('-').slice(0,2).join('-')}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${(e.cout/15000*100).toFixed(0)}%;background:var(--orange)"></div></div>
+      <div class="progress-pct" style="color:var(--orange);width:70px">${fmtMAD(e.cout)}</div>
+    </div>`
+  ).join('');
+
+  // Next vidanges (by km remaining)
+  const now_km_ref = 250000;
+  const vidanges = PARC.map(v => ({
+    imat: v.imat, marque: v.marque, km: v.km, pro: v.vidange_pro,
+    reste: v.vidange_pro - v.km
+  })).filter(v => v.reste > 0).sort((a,b) => a.reste - b.reste).slice(0,6);
+  document.getElementById('nextVidanges').innerHTML = vidanges.map(v =>
+    `<div class="city-row">
+      <span class="city-name"><span class="imat">${v.imat}</span></span>
+      <span class="city-count" style="color:${v.reste < 3000 ? 'var(--red)' : 'var(--yellow)'}">+${fmtKm(v.reste)}</span>
+    </div>`
+  ).join('');
+}
+
+// ════════════════════════════════════════════
+//  PARC AUTO
+// ════════════════════════════════════════════
+let parcFiltered = [...PARC];
+let parcPage = 1;
+const parcPerPage = 15;
+let parcSortKey = null, parcSortDir = 1;
+
+function buildParc() {
+  const villes = [...new Set(PARC.map(v => v.ville))].sort();
+  const sel = document.getElementById('filterVille');
+  villes.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+  renderParc();
+}
+
+function filterParc() {
+  const q = document.getElementById('searchParc').value.toLowerCase();
+  const type = document.getElementById('filterType').value;
+  const statut = document.getElementById('filterStatut').value;
+  const ville = document.getElementById('filterVille').value;
+  parcFiltered = PARC.filter(v =>
+    (!q || v.imat.toLowerCase().includes(q) || v.marque.toLowerCase().includes(q) || v.chauffeur.toLowerCase().includes(q)) &&
+    (!type || v.type === type) &&
+    (!statut || v.statut === statut) &&
+    (!ville || v.ville === ville)
+  );
+  parcPage = 1;
+  renderParc();
+}
+
+function sortParc(key) {
+  if (parcSortKey === key) parcSortDir *= -1;
+  else { parcSortKey = key; parcSortDir = 1; }
+  parcFiltered.sort((a,b) => {
+    let av = a[{n:'n',imat:'imat',type:'type',marque:'marque',annee:'annee',ville:'ville',statut:'statut',km:'km'}[key]];
+    let bv = b[{n:'n',imat:'imat',type:'type',marque:'marque',annee:'annee',ville:'ville',statut:'statut',km:'km'}[key]];
+    if (typeof av === 'number') return (av - bv) * parcSortDir;
+    return String(av).localeCompare(String(bv)) * parcSortDir;
+  });
+  renderParc();
+}
+
+function renderParc() {
+  const start = (parcPage-1)*parcPerPage;
+  const slice = parcFiltered.slice(start, start+parcPerPage);
+  document.getElementById('parcBody').innerHTML = slice.map(v => `
+    <tr>
+      <td>${v.n}</td>
+      <td><span class="imat">${v.imat}</span></td>
+      <td>${typeBadge(v.type)}</td>
+      <td style="color:var(--text-primary);font-weight:500">${v.marque}</td>
+      <td>${v.annee}</td>
+      <td>${v.ville}</td>
+      <td>${statutBadge(v.statut)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${fmtKm(v.km)}</td>
+      <td>${v.chauffeur}</td>
+      <td><span class="badge" style="background:var(--bg-deep);color:var(--text-secondary);border:1px solid var(--border)">${v.permis}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)">${fmtKm(v.vidange_pro)}</td>
+      <td style="font-size:12px">${v.carburant}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:60px;height:5px;background:var(--bg-deep);border-radius:3px;overflow:hidden">
+            <div style="width:${v.niv_carb}%;height:100%;background:${fuelColor(v.niv_carb)};border-radius:3px"></div>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${fuelColor(v.niv_carb)}">${v.niv_carb}%</span>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  const total = parcFiltered.length;
+  document.getElementById('parcInfo').textContent = `${start+1}–${Math.min(start+parcPerPage,total)} sur ${total} véhicules`;
+
+  const pages = Math.ceil(total / parcPerPage);
+  const pb = document.getElementById('parcPagination');
+  pb.innerHTML = '';
+  for (let i = 1; i <= pages; i++) {
+    const b = document.createElement('button');
+    b.className = 'page-btn' + (i === parcPage ? ' active' : '');
+    b.textContent = i;
+    b.onclick = () => { parcPage = i; renderParc(); };
+    pb.appendChild(b);
+  }
+}
+
+// ════════════════════════════════════════════
+//  ENTRETIEN
+// ════════════════════════════════════════════
+let entFiltered = [...ENTRETIEN];
+let entPage = 1;
+const entPerPage = 15;
+
+function buildEntretien() {
+  const total = ENTRETIEN.reduce((s,e) => s+e.cout, 0);
+  const avg = Math.round(total / ENTRETIEN.length);
+  const max = Math.max(...ENTRETIEN.map(e => e.cout));
+  document.getElementById('entretienSummary').innerHTML = `
+    <div class="cost-highlight"><div class="val">${fmtMAD(total)}</div><div class="lbl">Coût total</div></div>
+    <div class="cost-highlight"><div class="val">${fmtMAD(avg)}</div><div class="lbl">Coût moyen / opération</div></div>
+    <div class="cost-highlight"><div class="val">${fmtMAD(max)}</div><div class="lbl">Opération la + coûteuse</div></div>
+    <div class="cost-highlight"><div class="val">${ENTRETIEN.length}</div><div class="lbl">Total opérations</div></div>
+  `;
+
+  const prestas = [...new Set(ENTRETIEN.map(e => e.presta))].sort();
+  const sel = document.getElementById('filterPrestataire');
+  prestas.forEach(p => { const o = document.createElement('option'); o.value = p; o.textContent = p; sel.appendChild(o); });
+  renderEntretien();
+}
+
+function filterEntretien() {
+  const q = document.getElementById('searchEntretien').value.toLowerCase();
+  const presta = document.getElementById('filterPrestataire').value;
+  entFiltered = ENTRETIEN.filter(e =>
+    (!q || e.imat.toLowerCase().includes(q) || e.marque.toLowerCase().includes(q) || e.travaux.toLowerCase().includes(q)) &&
+    (!presta || e.presta === presta)
+  );
+  entPage = 1;
+  renderEntretien();
+}
+
+function renderEntretien() {
+  const start = (entPage-1)*entPerPage;
+  const slice = entFiltered.slice(start, start+entPerPage);
+  document.getElementById('entretienBody').innerHTML = slice.map(e => `
+    <tr>
+      <td>${e.n}</td>
+      <td><span class="imat">${e.imat}</span></td>
+      <td>${typeBadge(e.type)}</td>
+      <td style="color:var(--text-primary)">${e.marque}</td>
+      <td style="color:var(--text-primary)">${e.travaux}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${e.date}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${fmtKm(e.km)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${fmtKm(e.km_pro)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--orange);font-weight:600">${fmtMAD(e.cout)}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${e.presta}</td>
+    </tr>
+  `).join('');
+
+  const total = entFiltered.length;
+  document.getElementById('entretienInfo').textContent = `${start+1}–${Math.min(start+entPerPage,total)} sur ${total}`;
+  const pages = Math.ceil(total / entPerPage);
+  const pb = document.getElementById('entretienPagination');
+  pb.innerHTML = '';
+  for (let i = 1; i <= pages; i++) {
+    const b = document.createElement('button');
+    b.className = 'page-btn' + (i === entPage ? ' active' : '');
+    b.textContent = i;
+    b.onclick = () => { entPage = i; renderEntretien(); };
+    pb.appendChild(b);
+  }
+}
+
+// ════════════════════════════════════════════
+//  CARBURANT
+// ════════════════════════════════════════════
+let fuelFiltered = [...FUEL_DATA];
+let fuelView = 'table';
+
+function buildFuel() { filterFuel(); }
+
+function filterFuel() {
+  const q = document.getElementById('searchFuel') ? document.getElementById('searchFuel').value.toLowerCase() : '';
+  const type = document.getElementById('filterFuelType') ? document.getElementById('filterFuelType').value : '';
+  fuelFiltered = FUEL_DATA.filter(f =>
+    (!q || f.imat.toLowerCase().includes(q) || f.marque.toLowerCase().includes(q)) &&
+    (!type || f.carburant === type)
+  );
+  renderFuel();
+}
+
+function setFuelView(v) {
+  fuelView = v;
+  document.getElementById('fuelViewTable').classList.toggle('active', v==='table');
+  document.getElementById('fuelViewCards').classList.toggle('active', v==='cards');
+  document.getElementById('fuelTableView').style.display = v==='table' ? 'block' : 'none';
+  document.getElementById('fuelCardsView').style.display = v==='cards' ? 'block' : 'none';
+  renderFuel();
+}
+
+function renderFuel() {
+  if (fuelView === 'table') {
+    document.getElementById('fuelBody').innerHTML = fuelFiltered.map(f => `
+      <tr>
+        <td>${f.n}</td>
+        <td><span class="imat">${f.imat}</span></td>
+        <td>${typeBadge(f.type)}</td>
+        <td style="color:var(--text-primary)">${f.marque}</td>
+        <td><span class="badge" style="background:var(--bg-deep);color:var(--cyan);border:1px solid rgba(6,182,212,0.2)">${f.carburant}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${f.cap} L</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:70px;height:6px;background:var(--bg-deep);border-radius:3px;overflow:hidden">
+              <div style="width:${f.niv_pct}%;height:100%;background:${fuelColor(f.niv_pct)};border-radius:3px"></div>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${fuelColor(f.niv_pct)}">${f.niv_pct}%</span>
+          </div>
+        </td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${f.niv_l} L</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${f.conso} L/100</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary)">${Math.round(f.niv_l / f.conso * 100)} km</td>
+      </tr>
+    `).join('');
+  } else {
+    document.getElementById('fuelCards').innerHTML = fuelFiltered.map(f => `
+      <div class="fuel-card">
+        <div class="fuel-card-header">
+          <span class="fuel-imat">${f.imat}</span>
+          <span class="fuel-type">${f.carburant}</span>
+        </div>
+        <div class="fuel-model">${f.marque} — ${typeBadge(f.type)}</div>
+        <div class="fuel-gauge-wrap">
+          <div class="fuel-bar"><div class="fuel-fill" style="width:${f.niv_pct}%;background:${fuelColor(f.niv_pct)}"></div></div>
+          <div class="fuel-pct" style="color:${fuelColor(f.niv_pct)}">${f.niv_pct}%</div>
+        </div>
+        <div class="fuel-meta">
+          <span>${f.niv_l} L / ${f.cap} L</span>
+          <span>${f.conso} L/100km</span>
+          <span>~${Math.round(f.niv_l / f.conso * 100)} km</span>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// ════════════════════════════════════════════
+//  CHAUFFEURS
+// ════════════════════════════════════════════
+let chFiltered = [...CHAUFFEURS];
+let chView = 'table';
+
+function buildChauffeurs() { filterCh(); }
+
+function filterCh() {
+  const q = document.getElementById('searchCh').value.toLowerCase();
+  const permis = document.getElementById('filterPermis').value;
+  chFiltered = CHAUFFEURS.filter(c =>
+    (!q || c.nom.toLowerCase().includes(q) || c.ville.toLowerCase().includes(q) || c.imat.toLowerCase().includes(q)) &&
+    (!permis || c.permis === permis)
+  );
+  renderCh();
+}
+
+function setChView(v) {
+  chView = v;
+  document.getElementById('chViewTable').classList.toggle('active', v==='table');
+  document.getElementById('chViewCards').classList.toggle('active', v==='cards');
+  document.getElementById('chTableView').style.display = v==='table' ? 'block' : 'none';
+  document.getElementById('chCardsView').style.display = v==='cards' ? 'block' : 'none';
+  renderCh();
+}
+
+function renderCh() {
+  if (chView === 'table') {
+    document.getElementById('chBody').innerHTML = chFiltered.map(c => `
+      <tr>
+        <td>${c.n}</td>
+        <td style="color:var(--text-primary);font-weight:600">${c.nom}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${c.tel}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${c.nais}</td>
+        <td style="text-align:center"><span class="badge" style="background:var(--bg-deep);color:var(--text-secondary);border:1px solid var(--border)">${c.service} ans</span></td>
+        <td style="text-align:center"><span class="badge" style="background:var(--orange-faint);color:var(--orange);border:1px solid rgba(249,115,22,0.2)">${c.permis}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)">${c.exp}</td>
+        <td>${c.vehicule}</td>
+        <td><span class="imat">${c.imat}</span></td>
+        <td>${c.ville}</td>
+      </tr>
+    `).join('');
+  } else {
+    document.getElementById('chCards').innerHTML = chFiltered.map(c => `
+      <div class="chauffeur-card">
+        <div class="ch-header">
+          <div class="ch-avatar">👤</div>
+          <div>
+            <div class="ch-name">${c.nom}</div>
+            <div class="ch-vehicle">${c.vehicule} — <span style="font-family:'JetBrains Mono',monospace;font-size:11px">${c.imat}</span></div>
+          </div>
+        </div>
+        <div class="ch-row"><span class="key">Téléphone</span><span class="val">${c.tel}</span></div>
+        <div class="ch-row"><span class="key">Permis</span><span class="val" style="color:var(--orange)">${c.permis}</span></div>
+        <div class="ch-row"><span class="key">Exp. permis</span><span class="val">${c.exp}</span></div>
+        <div class="ch-row"><span class="key">Service</span><span class="val">${c.service} ans</span></div>
+        <div class="ch-row"><span class="key">Ville</span><span class="val">${c.ville}</span></div>
+      </div>
+    `).join('');
+  }
+}
+
+// ════════════════════════════════════════════
+//  VISITE TECHNIQUE
+// ════════════════════════════════════════════
+function buildVT() {
+  const sel = document.getElementById('vtImat');
+  PARC.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v.imat; o.textContent = `${v.imat} — ${v.marque}`;
+    sel.appendChild(o);
+  });
+
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('vtDate').value = today;
+
+  // Build check lists
+  const half1 = VT_POINTS.slice(0, 12);
+  const half2 = VT_POINTS.slice(12);
+
+  document.getElementById('vtChecks1').innerHTML = half1.map((p, i) => `
+    <div class="vt-check">
+      <div class="vt-check-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="vt-check-label">${p}</div>
+      <select class="vt-check-select" id="vt_${i+1}">
+        <option value="">—</option>
+        <option value="OK">✓ OK</option>
+        <option value="NOK">✗ NOK</option>
+        <option value="NA">N/A</option>
+      </select>
+    </div>
+  `).join('');
+
+  document.getElementById('vtChecks2').innerHTML = half2.map((p, i) => `
+    <div class="vt-check">
+      <div class="vt-check-num">${String(i+13).padStart(2,'0')}</div>
+      <div class="vt-check-label">${p}</div>
+      <select class="vt-check-select" id="vt_${i+13}">
+        <option value="">—</option>
+        <option value="OK">✓ OK</option>
+        <option value="NOK">✗ NOK</option>
+        <option value="NA">N/A</option>
+      </select>
+    </div>
+  `).join('');
+}
+
+function fillVTInfo() {
+  const imat = document.getElementById('vtImat').value;
+  const v = PARC.find(p => p.imat === imat);
+  if (v) {
+    document.getElementById('vtChauffeur').value = v.chauffeur;
+    document.getElementById('vtKm').value = v.km;
+  }
+}
+
+function resetVT() {
+  document.getElementById('vtImat').value = '';
+  document.getElementById('vtChauffeur').value = '';
+  document.getElementById('vtKm').value = '';
+  VT_POINTS.forEach((_, i) => {
+    const sel = document.getElementById('vt_' + (i+1));
+    if (sel) sel.value = '';
+  });
+}
+
+function printVT() {
+  window.print();
+}
+
+// ════════════════════════════════════════════
+//  ADMIN
+// ════════════════════════════════════════════
+function buildAdmin() { renderUserList(); }
+
+function generatePass() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let pw = '';
+  for (let i = 0; i < 8; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('newUserPass').value = pw;
+}
+
+function createUser() {
+  const id = document.getElementById('newUserId').value.trim().toLowerCase();
+  const name = document.getElementById('newUserName').value.trim();
+  const role = document.getElementById('newUserRole').value;
+  const pass = document.getElementById('newUserPass').value.trim();
+  const alert = document.getElementById('userAlert');
+
+  if (!id || !name || !pass) {
+    showAlert(alert, 'error', 'Veuillez remplir tous les champs et générer un mot de passe.');
+    return;
+  }
+
+  const users = loadUsers();
+  if (users[id]) {
+    showAlert(alert, 'error', `L'identifiant "${id}" est déjà utilisé.`);
+    return;
+  }
+
+  users[id] = { name, role, pass, isAdmin: false };
+  saveUsers(users);
+  showAlert(alert, 'success', `✓ Utilisateur "${name}" créé avec succès. ID: ${id} / Mot de passe: ${pass}`);
+  clearUserForm();
+  renderUserList();
+}
+
+function clearUserForm() {
+  document.getElementById('newUserId').value = '';
+  document.getElementById('newUserName').value = '';
+  document.getElementById('newUserPass').value = '';
+  document.getElementById('newUserRole').selectedIndex = 0;
+  document.getElementById('userAlert').className = 'alert';
+  document.getElementById('userAlert').textContent = '';
+}
+
+function deleteUser(id) {
+  const users = loadUsers();
+  if (users[id] && users[id].isAdmin) { alert('Impossible de supprimer le compte Master Admin.'); return; }
+  if (!confirm(`Supprimer l'utilisateur "${users[id]?.name}" ?`)) return;
+  delete users[id];
+  saveUsers(users);
+  renderUserList();
+}
+
+function regenPass(id) {
+  const users = loadUsers();
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let pw = '';
+  for (let i = 0; i < 8; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  users[id].pass = pw;
+  saveUsers(users);
+  renderUserList();
+}
+
+function renderUserList() {
+  const users = loadUsers();
+  document.getElementById('userList').innerHTML = Object.entries(users).map(([id, u]) => `
+    <div class="user-item">
+      <div class="user-item-info">
+        <div class="user-item-name">${u.name} ${u.isAdmin ? '<span style="color:var(--orange);font-size:11px">(Master Admin)</span>' : ''}</div>
+        <div class="user-item-role">ID: ${id} &nbsp;·&nbsp; ${u.role}</div>
+      </div>
+      <div class="user-item-pass">${u.pass}</div>
+      <div class="user-item-actions">
+        ${!u.isAdmin ? `<button class="btn-cyan" onclick="regenPass('${id}')">↻ MDP</button>` : ''}
+        ${!u.isAdmin ? `<button class="btn-danger" onclick="deleteUser('${id}')">✕</button>` : ''}
+        ${u.isAdmin ? '<span style="font-size:11px;color:var(--text-muted);padding:4px 8px">🔒 Protégé</span>' : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function changeAdminPass() {
+  const old = document.getElementById('oldPass').value;
+  const n1 = document.getElementById('newPass1').value;
+  const n2 = document.getElementById('newPass2').value;
+  const alert = document.getElementById('passAlert');
+  const users = loadUsers();
+
+  if (users[currentUser.id.toLowerCase()]?.pass !== old) {
+    showAlert(alert, 'error', 'Mot de passe actuel incorrect.');
+    return;
+  }
+  if (n1.length < 6) {
+    showAlert(alert, 'error', 'Le nouveau mot de passe doit faire au moins 6 caractères.');
+    return;
+  }
+  if (n1 !== n2) {
+    showAlert(alert, 'error', 'Les deux mots de passe ne correspondent pas.');
+    return;
+  }
+  users[currentUser.id.toLowerCase()].pass = n1;
+  currentUser.pass = n1;
+  saveUsers(users);
+  localStorage.setItem(AUTH_KEY, JSON.stringify(currentUser));
+  showAlert(alert, 'success', '✓ Mot de passe mis à jour avec succès.');
+  document.getElementById('oldPass').value = '';
+  document.getElementById('newPass1').value = '';
+  document.getElementById('newPass2').value = '';
+  renderUserList();
+}
+
+function showAlert(el, type, msg) {
+  el.className = 'alert ' + type;
+  el.textContent = msg;
+  setTimeout(() => { el.className = 'alert'; el.textContent = ''; }, 5000);
+}
+</script>
+</body>
+</html>
