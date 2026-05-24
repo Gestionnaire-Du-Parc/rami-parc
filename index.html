@@ -2191,6 +2191,10 @@ function sortParc(key) {
 }
 
 function renderParc() {
+  /* Après fin d'édition, resynchroniser parcFiltered depuis PARC */
+  if(!document.body.classList.contains('edit-mode')){
+    parcFiltered = [...PARC];
+  }
   const start = (parcPage-1)*parcPerPage;
   const slice = parcFiltered.slice(start, start+parcPerPage);
   document.getElementById('parcBody').innerHTML = slice.map(v => `
@@ -2656,36 +2660,58 @@ function toggleEditMode(){
   document.body.classList.toggle('edit-mode', on);
   const b=document.getElementById('editModeBtn');
   if(b){ b.classList.toggle('active', on); b.innerHTML = on ? '✅ Terminer' : '✏️ Modifier'; }
-  document.querySelectorAll('table tbody tr').forEach(tr=>{
-    tr.querySelectorAll('td').forEach(td=>{
-      if(!td.classList.contains('action-cell')) td.contentEditable = on ? 'true' : 'false';
-    });
-    if(on && !tr.querySelector('.row-del-btn')){
-      const td=document.createElement('td');
-      td.className='action-cell edit-only';
-      td.innerHTML='<button class="row-del-btn" onclick="this.closest(\'tr\').remove(); persistTables();">✕</button>';
-      tr.appendChild(td);
-    }
-  });
-  document.querySelectorAll('table').forEach(tbl=>{
-    if(on && !tbl.nextElementSibling?.classList?.contains('add-row-btn')){
-      const btn=document.createElement('button');
-      btn.className='add-row-btn edit-only';
-      btn.textContent='+ Ajouter une ligne';
-      btn.onclick=()=>{
-        const tbody=tbl.querySelector('tbody'); if(!tbody) return;
-        const cols=tbl.querySelectorAll('thead th').length || (tbody.rows[0]?.cells.length||3);
-        const tr=document.createElement('tr');
-        for(let i=0;i<cols;i++){ const td=document.createElement('td'); td.contentEditable='true'; td.textContent='—'; tr.appendChild(td);}
-        const td=document.createElement('td'); td.className='action-cell edit-only';
+
+  if(on){
+    /* ── ACTIVATION : rendre les cellules éditables ── */
+    document.querySelectorAll('table tbody tr').forEach(tr=>{
+      tr.querySelectorAll('td').forEach(td=>{
+        if(!td.classList.contains('action-cell')) td.contentEditable = 'true';
+      });
+      if(!tr.querySelector('.row-del-btn')){
+        const td=document.createElement('td');
+        td.className='action-cell edit-only';
         td.innerHTML='<button class="row-del-btn" onclick="this.closest(\'tr\').remove(); persistTables();">✕</button>';
         tr.appendChild(td);
-        tbody.appendChild(tr);
-      };
-      tbl.parentNode.insertBefore(btn, tbl.nextSibling);
-    }
-  });
-  if(!on) persistTables();
+      }
+    });
+    document.querySelectorAll('table').forEach(tbl=>{
+      if(!tbl.nextElementSibling?.classList?.contains('add-row-btn')){
+        const btn=document.createElement('button');
+        btn.className='add-row-btn edit-only';
+        btn.textContent='+ Ajouter une ligne';
+        btn.onclick=()=>{
+          const tbody=tbl.querySelector('tbody'); if(!tbody) return;
+          if(tbl.id==='parcTable'){
+            /* Ligne vierge avec toutes les colonnes parcTable */
+            const tr=document.createElement('tr');
+            ['—','XXXX-X-XX','VL','Marque Modèle','2024','Ville','Opérationnel','0','Chauffeur','B','0','Gasoil','50'].forEach(txt=>{
+              const td=document.createElement('td'); td.contentEditable='true'; td.textContent=txt; tr.appendChild(td);
+            });
+            const td2=document.createElement('td'); td2.className='action-cell edit-only';
+            td2.innerHTML='<button class="row-del-btn" onclick="this.closest(\'tr\').remove(); persistTables();">✕</button>';
+            tr.appendChild(td2);
+            tbody.appendChild(tr);
+          } else {
+            const cols=tbl.querySelectorAll('thead th').length||(tbody.rows[0]?.cells.length||3);
+            const tr=document.createElement('tr');
+            for(let i=0;i<cols;i++){ const td=document.createElement('td'); td.contentEditable='true'; td.textContent='—'; tr.appendChild(td); }
+            const td2=document.createElement('td'); td2.className='action-cell edit-only';
+            td2.innerHTML='<button class="row-del-btn" onclick="this.closest(\'tr\').remove(); persistTables();">✕</button>';
+            tr.appendChild(td2);
+            tbody.appendChild(tr);
+          }
+        };
+        tbl.parentNode.insertBefore(btn, tbl.nextSibling);
+      }
+    });
+
+  } else {
+    /* ── FIN : sync → re-render propre → sauvegarde ── */
+    try{ syncParcFromTable(); }catch(e){ console.warn(e); }
+    /* Re-render le parcTable avec badges/format corrects */
+    if(typeof renderParc==='function') renderParc();
+    persistTables();
+  }
 }
 
 /* ===== Persistence of edited tables ===== */
@@ -2840,44 +2866,65 @@ function parseKm(s){return parseInt(String(s).replace(/[^\d]/g,''),10)||0;}
 function syncParcFromTable(){
   const tbl=document.getElementById('parcTable'); if(!tbl) return;
   const rows=tbl.querySelectorAll('tbody tr');
-
-  // Reconstruire PARC entièrement depuis le tableau HTML (gère suppressions + modifs)
   const newParc=[];
   let num=1;
-  rows.forEach(tr=>{
-    const c=tr.querySelectorAll('td'); if(c.length<2) return;
-    const imat=stripTags(c[1].innerHTML); if(!imat) return;
 
-    // Récupérer l'entrée originale pour les champs non visibles (vidange_pro, carburant, etc.)
+  rows.forEach(tr=>{
+    const c=[...tr.querySelectorAll('td')].filter(td=>!td.classList.contains('action-cell'));
+    if(c.length<2) return;
+
+    const imat=stripTags(c[1]?c[1].innerHTML:'').trim(); if(!imat||imat==='—') return;
+
+    /* Chercher l'entrée originale (peut ne pas exister si c'est une nouvelle ligne) */
     const orig=PARC.find(p=>p.imat===imat)||{};
 
-    // Normaliser le statut (le badge contient un icone + texte en majuscules)
+    /* Type : lire le texte brut de la cellule (ex: "VL", "PL", "EC", "TC") */
+    const typeRaw=stripTags(c[2]?c[2].innerHTML:'').trim().toUpperCase();
+    const typeOk=['VL','PL','EC','TC'].includes(typeRaw)?typeRaw:(orig.type||'VL');
+
+    /* Statut : le badge peut contenir icone + texte en majuscules */
     const statutRaw=stripTags(c[6]?c[6].innerHTML:'').replace(/^[●◐✕○]\s*/,'').trim();
-    const statutMap={'OPÉRATIONNEL':'Opérationnel','EN RÉVISION':'En révision','EN PANNE':'En panne','HORS SERVICE':'Hors service'};
-    const statut=statutMap[statutRaw.toUpperCase()]||orig.statut||statutRaw;
+    const statutMap={'OPÉRATIONNEL':'Opérationnel','EN RÉVISION':'En révision','EN PANNE':'En panne','HORS SERVICE':'Hors service',
+                     'Opérationnel':'Opérationnel','En révision':'En révision','En panne':'En panne','Hors service':'Hors service'};
+    const statut=statutMap[statutRaw]||statutMap[statutRaw.toUpperCase()]||orig.statut||'Opérationnel';
+
+    const km=parseKm(c[7]?c[7].innerHTML:'0')||orig.km||0;
+
+    /* Prochaine vidange : col 10 */
+    const vidangeRaw=c[10]?parseKm(c[10].innerHTML):0;
+    const vidange_pro=vidangeRaw||orig.vidange_pro||(km+5000);
+
+    /* Carburant : col 11 */
+    const carburant=stripTags(c[11]?c[11].innerHTML:'')||orig.carburant||'Gasoil';
+
+    /* Niveau carburant : col 12, lire le % */
+    const nivRaw=parseInt(stripTags(c[12]?c[12].innerHTML:'0').replace(/[^\d]/g,''),10);
+    const niv_carb=isNaN(nivRaw)?orig.niv_carb||50:Math.min(100,Math.max(0,nivRaw));
 
     newParc.push({
       ...orig,
-      n:        num,
+      n:         num,
       imat,
-      marque:   c[3]?stripTags(c[3].innerHTML)||orig.marque:orig.marque,
-      annee:    c[4]?stripTags(c[4].innerHTML)||orig.annee:orig.annee,
-      ville:    c[5]?stripTags(c[5].innerHTML)||orig.ville:orig.ville,
+      type:      typeOk,
+      marque:    stripTags(c[3]?c[3].innerHTML:'')||orig.marque||'—',
+      annee:     stripTags(c[4]?c[4].innerHTML:'')||orig.annee||'—',
+      ville:     stripTags(c[5]?c[5].innerHTML:'')||orig.ville||'—',
       statut,
-      km:       c[7]?parseKm(c[7].innerHTML)||orig.km||0:orig.km||0,
-      chauffeur:c[8]?stripTags(c[8].innerHTML)||orig.chauffeur||'—':orig.chauffeur||'—',
+      km,
+      chauffeur: stripTags(c[8]?c[8].innerHTML:'')||orig.chauffeur||'—',
+      permis:    stripTags(c[9]?c[9].innerHTML:'')||orig.permis||'B',
+      vidange_pro,
+      carburant,
+      niv_carb,
     });
-
-    // Renuméroter la colonne N° dans le DOM
-    if(c[0]&&!c[0].classList.contains('action-cell')) c[0].textContent=num;
     num++;
   });
 
-  // Remplacer le contenu de PARC sans changer la référence du tableau
+  /* Remplacer PARC sans changer la référence */
   PARC.length=0;
   newParc.forEach(v=>PARC.push(v));
 
-  // Rafraîchir le dashboard avec les nouvelles données
+  /* Rafraîchir le dashboard */
   if(typeof buildDashboard==='function') buildDashboard();
 }
 
