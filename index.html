@@ -2839,17 +2839,45 @@ function parseKm(s){return parseInt(String(s).replace(/[^\d]/g,''),10)||0;}
 
 function syncParcFromTable(){
   const tbl=document.getElementById('parcTable'); if(!tbl) return;
-  tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    const c=tr.querySelectorAll('td'); if(c.length<9) return;
-    const imat=stripTags(c[1].innerHTML);
-    const v=PARC.find(p=>p.imat===imat); if(!v) return;
-    v.marque=stripTags(c[3].innerHTML);
-    v.annee=stripTags(c[4].innerHTML);
-    v.ville=stripTags(c[5].innerHTML);
-    v.statut=stripTags(c[6].innerHTML).replace(/^[●◐✕○]\s*/,'') || v.statut;
-    v.km=parseKm(c[7].innerHTML);
-    v.chauffeur=stripTags(c[8].innerHTML);
+  const rows=tbl.querySelectorAll('tbody tr');
+
+  // Reconstruire PARC entièrement depuis le tableau HTML (gère suppressions + modifs)
+  const newParc=[];
+  let num=1;
+  rows.forEach(tr=>{
+    const c=tr.querySelectorAll('td'); if(c.length<2) return;
+    const imat=stripTags(c[1].innerHTML); if(!imat) return;
+
+    // Récupérer l'entrée originale pour les champs non visibles (vidange_pro, carburant, etc.)
+    const orig=PARC.find(p=>p.imat===imat)||{};
+
+    // Normaliser le statut (le badge contient un icone + texte en majuscules)
+    const statutRaw=stripTags(c[6]?c[6].innerHTML:'').replace(/^[●◐✕○]\s*/,'').trim();
+    const statutMap={'OPÉRATIONNEL':'Opérationnel','EN RÉVISION':'En révision','EN PANNE':'En panne','HORS SERVICE':'Hors service'};
+    const statut=statutMap[statutRaw.toUpperCase()]||orig.statut||statutRaw;
+
+    newParc.push({
+      ...orig,
+      n:        num,
+      imat,
+      marque:   c[3]?stripTags(c[3].innerHTML)||orig.marque:orig.marque,
+      annee:    c[4]?stripTags(c[4].innerHTML)||orig.annee:orig.annee,
+      ville:    c[5]?stripTags(c[5].innerHTML)||orig.ville:orig.ville,
+      statut,
+      km:       c[7]?parseKm(c[7].innerHTML)||orig.km||0:orig.km||0,
+      chauffeur:c[8]?stripTags(c[8].innerHTML)||orig.chauffeur||'—':orig.chauffeur||'—',
+    });
+
+    // Renuméroter la colonne N° dans le DOM
+    if(c[0]&&!c[0].classList.contains('action-cell')) c[0].textContent=num;
+    num++;
   });
+
+  // Remplacer le contenu de PARC sans changer la référence du tableau
+  PARC.length=0;
+  newParc.forEach(v=>PARC.push(v));
+
+  // Rafraîchir le dashboard avec les nouvelles données
   if(typeof buildDashboard==='function') buildDashboard();
 }
 
