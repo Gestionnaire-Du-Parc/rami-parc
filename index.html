@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRECISION LOGISTICS — Gestion du Parc Auto</title>
+<title>SOFALIM PARC — Gestion du Parc Auto</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -14,10 +14,10 @@
   --bg-hover: #1c2535;
   --border: #1e2d3d;
   --border-bright: #2a3f55;
-  --orange: #f97316;
-  --orange-dim: #c2580f;
-  --orange-glow: rgba(249,115,22,0.15);
-  --orange-faint: rgba(249,115,22,0.06);
+  --orange: #6cb37a;
+  --orange-dim: #4f8a5d;
+  --orange-glow: rgba(108,179,122,0.18);
+  --orange-faint: rgba(108,179,122,0.07);
   --text-primary: #e8edf2;
   --text-secondary: #8ba0b8;
   --text-muted: #4a6278;
@@ -52,7 +52,7 @@ body {
   justify-content: center;
   z-index: 9999;
   background-image:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(249,115,22,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(108,179,122,0.08) 0%, transparent 60%),
     repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,45,61,0.3) 40px),
     repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,45,61,0.3) 40px);
 }
@@ -77,7 +77,7 @@ body {
   justify-content: center;
   font-size: 28px;
   margin-bottom: 16px;
-  box-shadow: 0 0 40px rgba(249,115,22,0.2);
+  box-shadow: 0 0 40px rgba(108,179,122,0.2);
 }
 
 .login-logo h1 {
@@ -103,7 +103,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 36px;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(249,115,22,0.04);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(108,179,122,0.04);
 }
 
 .login-card h2 {
@@ -168,7 +168,7 @@ body {
   transition: all 0.2s;
 }
 
-.btn-login:hover { background: #ea6d10; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(249,115,22,0.3); }
+.btn-login:hover { background: #ea6d10; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(108,179,122,0.3); }
 .btn-login:active { transform: translateY(0); }
 
 .login-error {
@@ -251,7 +251,7 @@ body {
   text-transform: uppercase;
   color: var(--orange);
   background: var(--orange-faint);
-  border: 1px solid rgba(249,115,22,0.2);
+  border: 1px solid rgba(108,179,122,0.2);
   border-radius: 4px;
   padding: 2px 8px;
 }
@@ -337,7 +337,7 @@ body {
 .section-icon {
   width: 40px; height: 40px;
   background: var(--orange-faint);
-  border: 1px solid rgba(249,115,22,0.2);
+  border: 1px solid rgba(108,179,122,0.2);
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 20px;
@@ -923,7 +923,7 @@ tbody td:first-child {
   font-size: 12px;
   color: var(--orange);
   background: var(--orange-faint);
-  border: 1px solid rgba(249,115,22,0.2);
+  border: 1px solid rgba(108,179,122,0.2);
   border-radius: 5px;
   padding: 4px 10px;
   letter-spacing: 1px;
@@ -1186,7 +1186,7 @@ tbody td:first-child {
 
 .btn-copy {
   background: var(--orange-glow);
-  border: 1px solid rgba(249,115,22,0.3);
+  border: 1px solid rgba(108,179,122,0.3);
   border-radius: 6px;
   padding: 6px 14px;
   font-family: 'Barlow Condensed', sans-serif;
@@ -1199,7 +1199,68 @@ tbody td:first-child {
   transition: all 0.2s;
 }
 
-.btn-copy:hover { background: rgba(249,115,22,0.2); }
+.btn-copy:hover { background: rgba(108,179,122,0.2); }
+
+
+/* ===== LIGHT THEME ===== */
+body.light {
+  --bg-void: #f5f7f4;
+  --bg-deep: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-card: #f7faf6;
+  --bg-hover: #eef4ec;
+  --border: #d9e4d6;
+  --border-bright: #b9cdb4;
+  --text-primary: #1c2a20;
+  --text-secondary: #4d6354;
+  --text-muted: #8aa091;
+  --orange-glow: rgba(108,179,122,0.22);
+  --orange-faint: rgba(108,179,122,0.10);
+}
+body.light #loginScreen {
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(108,179,122,0.18) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(185,205,180,0.5) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(185,205,180,0.5) 40px);
+}
+
+/* ===== TOP TOOLBAR BUTTONS ===== */
+.tool-btn{
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  color: var(--text-primary);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-right: 8px;
+  transition: all .15s;
+}
+.tool-btn:hover{ background: var(--bg-hover); border-color: var(--orange);}
+.tool-btn.active{ background: var(--orange); color:#fff; border-color: var(--orange);}
+
+/* ===== EDIT MODE ===== */
+body.edit-mode td[contenteditable="true"]{
+  outline: 1px dashed var(--orange);
+  background: var(--orange-faint);
+}
+.row-del-btn{
+  background: transparent; border:1px solid var(--red); color: var(--red);
+  border-radius:6px; padding:2px 8px; cursor:pointer; font-size:11px; font-weight:700;
+}
+.row-del-btn:hover{ background: var(--red); color:#fff;}
+.add-row-btn{
+  background: var(--orange); color:#fff; border:none;
+  padding: 8px 16px; border-radius:8px; cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:1px;
+  text-transform: uppercase; font-size:12px; margin: 8px 0;
+}
+.add-row-btn:hover{ filter: brightness(1.1);}
+body:not(.edit-mode) .edit-only{ display:none !important; }
 
 </style>
 </head>
@@ -1210,7 +1271,7 @@ tbody td:first-child {
   <div class="login-box">
     <div class="login-logo">
       <div class="logo-icon">🚛</div>
-      <h1>PRECISION LOGISTICS</h1>
+      <h1>SOFALIM PARC</h1>
       <p>Gestion du Parc Automobile</p>
     </div>
     <div class="login-card">
@@ -1237,11 +1298,13 @@ tbody td:first-child {
     <div class="topbar-brand">
       <div class="topbar-icon">🚛</div>
       <div>
-        <div class="topbar-title">PRECISION <span>LOGISTICS</span></div>
+        <div class="topbar-title">SOFALIM <span>PARC</span></div>
         <div class="topbar-meta">PARC AUTO MAROC — 35 VÉHICULES</div>
       </div>
     </div>
     <div class="topbar-right">
+      <button class="tool-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Sombre</button>
+      <button class="tool-btn" id="editModeBtn" onclick="toggleEditMode()">✏️ Modifier</button>
       <div class="user-badge">
         <span class="role-tag" id="topRole">—</span>
         <span class="user-name" id="topUser">—</span>
@@ -1276,36 +1339,36 @@ tbody td:first-child {
         </div>
       </div>
 
-      <div class="stats-grid">
+      <div class="stats-grid" id="dashStatsGrid">
         <div class="stat-card" style="--stat-color: var(--text-secondary)">
           <div class="stat-label">Total Véhicules</div>
-          <div class="stat-value">35</div>
+          <div class="stat-value" id="dashTotal">—</div>
           <div class="stat-sub">Parc complet</div>
         </div>
         <div class="stat-card" style="--stat-color: var(--green)">
           <div class="stat-label">Opérationnels</div>
-          <div class="stat-value">9</div>
-          <div class="stat-sub">25.7% du parc</div>
+          <div class="stat-value" id="dashOp">—</div>
+          <div class="stat-sub" id="dashOpSub">—</div>
         </div>
         <div class="stat-card" style="--stat-color: var(--yellow)">
           <div class="stat-label">En Révision</div>
-          <div class="stat-value">12</div>
-          <div class="stat-sub">34.3% du parc</div>
+          <div class="stat-value" id="dashRev">—</div>
+          <div class="stat-sub" id="dashRevSub">—</div>
         </div>
         <div class="stat-card" style="--stat-color: var(--red)">
           <div class="stat-label">En Panne</div>
-          <div class="stat-value">2</div>
-          <div class="stat-sub">5.7% du parc</div>
+          <div class="stat-value" id="dashPan">—</div>
+          <div class="stat-sub" id="dashPanSub">—</div>
         </div>
         <div class="stat-card" style="--stat-color: #9ca3af">
           <div class="stat-label">Hors Service</div>
-          <div class="stat-value">12</div>
-          <div class="stat-sub">34.3% du parc</div>
+          <div class="stat-value" id="dashHS">—</div>
+          <div class="stat-sub" id="dashHSSub">—</div>
         </div>
         <div class="stat-card" style="--stat-color: var(--orange)">
           <div class="stat-label">Km Moyen / Véh.</div>
-          <div class="stat-value">153k</div>
-          <div class="stat-sub">153 032 km</div>
+          <div class="stat-value" id="dashKmVal">—</div>
+          <div class="stat-sub" id="dashKmSub">—</div>
         </div>
       </div>
 
@@ -1596,7 +1659,11 @@ tbody td:first-child {
         </div>
         <div class="input-group">
           <label>Chauffeur</label>
-          <input type="text" id="vtChauffeur" readonly>
+          <input type="text" id="vtChauffeur">
+        </div>
+        <div class="input-group">
+          <label>Agent de parc</label>
+          <input type="text" id="vtAgent" placeholder="Nom de l'agent">
         </div>
         <div class="input-group">
           <label>Date</label>
@@ -1615,6 +1682,20 @@ tbody td:first-child {
         <div class="vt-form">
           <div class="vt-header">Points de Contrôle (13–23)</div>
           <div class="vt-checks" id="vtChecks2"></div>
+        </div>
+      </div>
+
+      <!-- Signatures (visibles à l'impression et à l'écran) -->
+      <div class="vt-signatures">
+        <div class="vt-sig-box">
+          <div class="vt-sig-label">Signature du Chauffeur</div>
+          <div class="vt-sig-name" id="vtSigChauffeur">—</div>
+          <div class="vt-sig-line"></div>
+        </div>
+        <div class="vt-sig-box">
+          <div class="vt-sig-label">Signature de l'Agent de Parc</div>
+          <div class="vt-sig-name" id="vtSigAgent">—</div>
+          <div class="vt-sig-line"></div>
         </div>
       </div>
     </div>
@@ -2017,6 +2098,24 @@ function fmtMAD(n) { return Number(n).toLocaleString('fr-MA') + ' MAD'; }
 //  DASHBOARD
 // ════════════════════════════════════════════
 function buildDashboard() {
+  // ── Stat cards dynamiques ──
+  const total = PARC.length;
+  const op  = PARC.filter(v => v.statut === 'Opérationnel').length;
+  const rev = PARC.filter(v => v.statut === 'En révision').length;
+  const pan = PARC.filter(v => v.statut === 'En panne').length;
+  const hs  = PARC.filter(v => v.statut === 'Hors service').length;
+  const kmMoy = Math.round(PARC.reduce((s,v) => s + (v.km||0), 0) / (total||1));
+  const pct = n => total ? (n/total*100).toFixed(1) + '% du parc' : '—';
+
+  const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  setEl('dashTotal',  total);
+  setEl('dashOp',     op);    setEl('dashOpSub',  pct(op));
+  setEl('dashRev',    rev);   setEl('dashRevSub', pct(rev));
+  setEl('dashPan',    pan);   setEl('dashPanSub', pct(pan));
+  setEl('dashHS',     hs);    setEl('dashHSSub',  pct(hs));
+  setEl('dashKmVal',  Math.round(kmMoy/1000) + 'k');
+  setEl('dashKmSub',  Number(kmMoy).toLocaleString('fr-MA') + ' km');
+
   // City breakdown
   const cities = {};
   PARC.forEach(v => { cities[v.ville] = (cities[v.ville] || 0) + 1; });
@@ -2309,7 +2408,7 @@ function renderCh() {
         <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${c.tel}</td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${c.nais}</td>
         <td style="text-align:center"><span class="badge" style="background:var(--bg-deep);color:var(--text-secondary);border:1px solid var(--border)">${c.service} ans</span></td>
-        <td style="text-align:center"><span class="badge" style="background:var(--orange-faint);color:var(--orange);border:1px solid rgba(249,115,22,0.2)">${c.permis}</span></td>
+        <td style="text-align:center"><span class="badge" style="background:var(--orange-faint);color:var(--orange);border:1px solid rgba(108,179,122,0.2)">${c.permis}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)">${c.exp}</td>
         <td>${c.vehicule}</td>
         <td><span class="imat">${c.imat}</span></td>
@@ -2394,15 +2493,26 @@ function fillVTInfo() {
 function resetVT() {
   document.getElementById('vtImat').value = '';
   document.getElementById('vtChauffeur').value = '';
+  document.getElementById('vtAgent').value = '';
   document.getElementById('vtKm').value = '';
   VT_POINTS.forEach((_, i) => {
     const sel = document.getElementById('vt_' + (i+1));
     if (sel) sel.value = '';
   });
+  document.getElementById('vtSigChauffeur').textContent = '—';
+  document.getElementById('vtSigAgent').textContent = '—';
 }
 
 function printVT() {
-  window.print();
+  document.getElementById('vtSigChauffeur').textContent =
+    document.getElementById('vtChauffeur').value.trim() || '—';
+  document.getElementById('vtSigAgent').textContent =
+    document.getElementById('vtAgent').value.trim() || '—';
+  document.body.classList.add('printing-vt');
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => document.body.classList.remove('printing-vt'), 500);
+  }, 50);
 }
 
 // ════════════════════════════════════════════
@@ -2524,5 +2634,236 @@ function showAlert(el, type, msg) {
   setTimeout(() => { el.className = 'alert'; el.textContent = ''; }, 5000);
 }
 </script>
+
+<script>
+/* ===== THEME TOGGLE ===== */
+function applyTheme(t){
+  document.body.classList.toggle('light', t==='light');
+  const b=document.getElementById('themeToggleBtn');
+  if(b) b.innerHTML = t==='light' ? '☀️ Clair' : '🌙 Sombre';
+  localStorage.setItem('sofalim_theme', t);
+}
+function toggleTheme(){
+  applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+}
+applyTheme(localStorage.getItem('sofalim_theme') || 'light');
+
+/* ===== EDIT MODE (generic) =====
+   Makes all table cells editable, adds a delete button per row,
+   and an "Ajouter une ligne" button under each table. */
+function toggleEditMode(){
+  const on = !document.body.classList.contains('edit-mode');
+  document.body.classList.toggle('edit-mode', on);
+  const b=document.getElementById('editModeBtn');
+  if(b){ b.classList.toggle('active', on); b.innerHTML = on ? '✅ Terminer' : '✏️ Modifier'; }
+  document.querySelectorAll('table tbody tr').forEach(tr=>{
+    tr.querySelectorAll('td').forEach(td=>{
+      if(!td.classList.contains('action-cell')) td.contentEditable = on ? 'true' : 'false';
+    });
+    if(on && !tr.querySelector('.row-del-btn')){
+      const td=document.createElement('td');
+      td.className='action-cell edit-only';
+      td.innerHTML='<button class="row-del-btn" onclick="this.closest(\'tr\').remove(); persistTables();">✕</button>';
+      tr.appendChild(td);
+    }
+  });
+  document.querySelectorAll('table').forEach(tbl=>{
+    if(on && !tbl.nextElementSibling?.classList?.contains('add-row-btn')){
+      const btn=document.createElement('button');
+      btn.className='add-row-btn edit-only';
+      btn.textContent='+ Ajouter une ligne';
+      btn.onclick=()=>{
+        const tbody=tbl.querySelector('tbody'); if(!tbody) return;
+        const cols=tbl.querySelectorAll('thead th').length || (tbody.rows[0]?.cells.length||3);
+        const tr=document.createElement('tr');
+        for(let i=0;i<cols;i++){ const td=document.createElement('td'); td.contentEditable='true'; td.textContent='—'; tr.appendChild(td);}
+        const td=document.createElement('td'); td.className='action-cell edit-only';
+        td.innerHTML='<button class="row-del-btn" onclick="this.closest(\'tr\').remove(); persistTables();">✕</button>';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      };
+      tbl.parentNode.insertBefore(btn, tbl.nextSibling);
+    }
+  });
+  if(!on) persistTables();
+}
+
+/* ===== Persistence of edited tables ===== */
+function persistTables(){
+  const dump={};
+  document.querySelectorAll('table[id]').forEach(tbl=>{
+    const rows=[];
+    tbl.querySelectorAll('tbody tr').forEach(tr=>{
+      const cells=[...tr.querySelectorAll('td')].filter(td=>!td.classList.contains('action-cell')).map(td=>td.innerHTML);
+      rows.push(cells);
+    });
+    dump[tbl.id]=rows;
+  });
+  localStorage.setItem('sofalim_tables', JSON.stringify(dump));
+}
+function restoreTables(){
+  try{
+    const dump=JSON.parse(localStorage.getItem('sofalim_tables')||'{}');
+    Object.entries(dump).forEach(([id,rows])=>{
+      const tbl=document.getElementById(id); if(!tbl) return;
+      const tbody=tbl.querySelector('tbody'); if(!tbody||!rows.length) return;
+      tbody.innerHTML='';
+      rows.forEach(cells=>{
+        const tr=document.createElement('tr');
+        cells.forEach(html=>{ const td=document.createElement('td'); td.innerHTML=html; tr.appendChild(td);});
+        tbody.appendChild(tr);
+      });
+    });
+  }catch(e){console.warn(e);}
+}
+// Restore after the app's own renderers run
+setTimeout(restoreTables, 600);
+// Persist on any cell edit
+document.addEventListener('input', e=>{
+  if(e.target.matches('td[contenteditable="true"]')) {
+    clearTimeout(window.__persistT);
+    window.__persistT=setTimeout(persistTables, 400);
+  }
+});
+</script>
+
+<style>
+/* ===== Signatures ===== */
+.vt-signatures{
+  display:grid;grid-template-columns:1fr 1fr;gap:32px;
+  margin:24px 16px 16px;padding:20px;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+}
+.vt-sig-box{display:flex;flex-direction:column;gap:8px}
+.vt-sig-label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:600}
+.vt-sig-name{font-size:14px;color:var(--text-primary);font-weight:500;min-height:20px}
+.vt-sig-line{margin-top:36px;border-bottom:1.5px solid var(--text-primary)}
+
+/* ===== Print ===== */
+@media print{
+  @page{size:A4 portrait;margin:5mm}
+  html,body{background:#fff !important;color:#000 !important;margin:0 !important;padding:0 !important;width:100% !important;height:auto !important;font-size:9px !important}
+  body.printing-vt #loginScreen,
+  body.printing-vt .topbar,
+  body.printing-vt .nav-tabs,
+  body.printing-vt .page:not(#page-visite),
+  body.printing-vt .btn-primary,
+  body.printing-vt .btn-secondary,
+  body.printing-vt .add-row-btn,
+  body.printing-vt .row-del-btn,
+  body.printing-vt .edit-only,
+  body.printing-vt .section-header{display:none !important}
+  body.printing-vt .app,
+  body.printing-vt .main,
+  body.printing-vt .content,
+  body.printing-vt #page-visite{display:block !important;color:#000;margin:0 !important;padding:0 !important;width:100% !important;max-width:100% !important;overflow:visible !important;background:#fff !important}
+
+  /* En-tête compact */
+  body.printing-vt .vt-info-row{
+    display:grid !important;grid-template-columns:repeat(5,1fr) !important;
+    gap:2px 6px !important;padding:0 !important;margin:0 0 4px 0 !important;
+  }
+  body.printing-vt .input-group label{font-size:7px !important;margin:0 !important;letter-spacing:.5px !important}
+  body.printing-vt .input-group input,
+  body.printing-vt .input-group select{
+    font-size:9px !important;padding:2px 4px !important;
+    min-height:0 !important;height:auto !important;line-height:1.2 !important;
+    border-color:#999 !important;background:#fff !important;color:#000 !important;
+    border-radius:3px !important;
+  }
+
+  /* Titre VT imprimé */
+  body.printing-vt #page-visite::before{
+    content:"FICHE DE VISITE TECHNIQUE — SOFALIM PARC";
+    display:block;
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:13px;font-weight:800;letter-spacing:3px;
+    text-align:center;text-transform:uppercase;
+    border-bottom:2px solid #000;padding-bottom:3px;margin-bottom:4px;
+  }
+
+  /* Grille 2 colonnes, compacte */
+  body.printing-vt .vt-grid{
+    display:grid !important;grid-template-columns:1fr 1fr !important;
+    gap:4px 8px !important;margin:0 !important;
+  }
+  body.printing-vt .vt-form{
+    background:#fff !important;border:1px solid #999 !important;
+    border-radius:3px !important;overflow:visible !important;
+    page-break-inside:avoid;break-inside:avoid;
+  }
+  body.printing-vt .vt-header{
+    font-size:8px !important;padding:2px 6px !important;
+    background:#eee !important;border-bottom:1px solid #bbb !important;
+    letter-spacing:1px !important;color:#000 !important;
+  }
+  body.printing-vt .vt-checks{padding:2px 4px !important}
+  body.printing-vt .vt-check{
+    padding:1px 0 !important;border-bottom:1px solid #eee !important;
+    display:flex;align-items:center;gap:4px !important;
+  }
+  body.printing-vt .vt-check-num{
+    width:16px !important;height:16px !important;
+    font-size:7px !important;border-radius:2px !important;
+    border:1px solid #bbb !important;background:#f5f5f5 !important;
+    color:#333 !important;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  body.printing-vt .vt-check-label{font-size:8px !important;color:#000 !important;line-height:1.2 !important}
+  body.printing-vt .vt-check-select{
+    font-size:8px !important;padding:1px 3px !important;
+    border:1px solid #bbb !important;border-radius:2px !important;
+    background:#fff !important;color:#000 !important;min-width:42px !important;
+  }
+
+  /* Signatures en bas */
+  body.printing-vt .vt-signatures{
+    display:grid !important;grid-template-columns:1fr 1fr !important;
+    gap:12px !important;margin:4px 0 0 0 !important;padding:8px !important;
+    background:#fff !important;border:1px solid #999 !important;
+    border-radius:3px !important;page-break-inside:avoid;break-inside:avoid;
+  }
+  body.printing-vt .vt-sig-label{font-size:8px !important;color:#000 !important}
+  body.printing-vt .vt-sig-name{color:#000 !important;font-size:10px !important}
+  body.printing-vt .vt-sig-line{border-bottom:1px solid #000 !important;margin-top:20px !important}
+
+  body.printing-vt *{box-shadow:none !important;text-shadow:none !important}
+  body.printing-vt{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
+<script>
+/* ===== Sync edited Parc table back into PARC and refresh dashboard ===== */
+function stripTags(h){const d=document.createElement('div');d.innerHTML=h;return (d.textContent||'').trim();}
+function parseKm(s){return parseInt(String(s).replace(/[^\d]/g,''),10)||0;}
+
+function syncParcFromTable(){
+  const tbl=document.getElementById('parcTable'); if(!tbl) return;
+  tbl.querySelectorAll('tbody tr').forEach(tr=>{
+    const c=tr.querySelectorAll('td'); if(c.length<9) return;
+    const imat=stripTags(c[1].innerHTML);
+    const v=PARC.find(p=>p.imat===imat); if(!v) return;
+    v.marque=stripTags(c[3].innerHTML);
+    v.annee=stripTags(c[4].innerHTML);
+    v.ville=stripTags(c[5].innerHTML);
+    v.statut=stripTags(c[6].innerHTML).replace(/^[●◐✕○]\s*/,'') || v.statut;
+    v.km=parseKm(c[7].innerHTML);
+    v.chauffeur=stripTags(c[8].innerHTML);
+  });
+  if(typeof buildDashboard==='function') buildDashboard();
+}
+
+// Wrap persistTables to also sync + refresh dashboard
+const __origPersist = window.persistTables;
+window.persistTables = function(){
+  try{ syncParcFromTable(); }catch(e){console.warn(e);}
+  if(typeof __origPersist==='function') __origPersist();
+};
+
+// After initial restore, sync once
+setTimeout(()=>{ try{ syncParcFromTable(); }catch(e){} }, 900);
+</script>
+
 </body>
 </html>
+
